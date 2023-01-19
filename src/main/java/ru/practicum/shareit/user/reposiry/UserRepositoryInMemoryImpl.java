@@ -73,6 +73,11 @@ public class UserRepositoryInMemoryImpl implements UserRepository {
         }
     }
 
+    @Override
+    public boolean isUserExist(long id){
+        return users.containsKey(id);
+    }
+
     private void updateUniqueEmail(long id, String email){
         if (uniqueEmails.contains(email)){
             throw new ValidationException("Такой email уже существует!");

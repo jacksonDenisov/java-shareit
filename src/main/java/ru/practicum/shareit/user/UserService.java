@@ -44,4 +44,8 @@ public class UserService {
         log.info("Удаляем пользователя с id = {}.", id);
         repository.delete(id);
     }
+
+    public boolean isUserExist(long id){
+        return repository.isUserExist(id);
+    }
 }

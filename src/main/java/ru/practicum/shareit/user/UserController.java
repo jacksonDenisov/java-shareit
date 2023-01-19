@@ -28,14 +28,14 @@ public class UserController {
         return service.create(user);
     }
 
-    @PatchMapping("/{id}")
-    protected User update(@RequestBody User user, @PathVariable long id) {
-        return service.update(user, id);
+    @PatchMapping("/{userId}")
+    protected User update(@RequestBody User user, @PathVariable long userId) {
+        return service.update(user, userId);
     }
 
-    @GetMapping("/{id}")
-    protected User findById(@PathVariable long id) {
-        return service.findById(id);
+    @GetMapping("/{userId}")
+    protected User findById(@PathVariable long userId) {
+        return service.findById(userId);
     }
 
     @GetMapping
@@ -43,9 +43,9 @@ public class UserController {
         return service.findAll();
     }
 
-    @DeleteMapping("/{id}")
-    protected void delete(@PathVariable long id) {
-        service.delete(id);
+    @DeleteMapping("/{userId}")
+    protected void delete(@PathVariable long userId) {
+        service.delete(userId);
     }
 
 }

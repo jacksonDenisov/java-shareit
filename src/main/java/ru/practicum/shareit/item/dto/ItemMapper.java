@@ -8,7 +8,7 @@ public class ItemMapper {
         return new Item(0,
                 itemDto.getName(),
                 itemDto.getDescription(),
-                itemDto.isAvailable(),
+                itemDto.getAvailable(),
                 owner);
     }
 }
