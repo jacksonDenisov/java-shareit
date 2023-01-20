@@ -49,45 +49,45 @@ public class UserServiceTest {
         assertThrows(ValidationException.class, () -> {
             userService.create(userDto1);
         });
-       userService.delete(1);
-       User user = userService.create(userDto1);
-       assertEquals(user.getEmail(), userDto1.getEmail());
+        userService.delete(1L);
+        User user = userService.create(userDto1);
+        assertEquals(user.getEmail(), userDto1.getEmail());
     }
 
     @Test
     void shouldUpdateUser() {
         userService.create(userDto1);
-        assertEquals("name1", userService.findById(1l).getName());
-        assertEquals("email1@gmail.com", userService.findById(1l).getEmail());
-        userService.update(userDto2, 1);
-        assertEquals("name2", userService.findById(1l).getName());
-        assertEquals("email2@gmail.com", userService.findById(1l).getEmail());
+        assertEquals("name1", userService.findById(1L).getName());
+        assertEquals("email1@gmail.com", userService.findById(1L).getEmail());
+        userService.update(userDto2, 1L);
+        assertEquals("name2", userService.findById(1L).getName());
+        assertEquals("email2@gmail.com", userService.findById(1L).getEmail());
     }
 
     @Test
     void shouldNotUpdateUserIfEmailIsNotUnique() {
         userService.create(userDto1);
-        assertEquals("name1", userService.findById(1l).getName());
-        assertEquals("email1@gmail.com", userService.findById(1l).getEmail());
+        assertEquals("name1", userService.findById(1L).getName());
+        assertEquals("email1@gmail.com", userService.findById(1L).getEmail());
         assertThrows(ValidationException.class, () -> {
-            userService.update(userDto1, 1);
+            userService.update(userDto1, 1L);
         });
-        assertEquals(userService.findById(1l).getName(), "name1");
+        assertEquals(userService.findById(1L).getName(), "name1");
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToUpdateNonExistentUser() {
         assertThrows(NotFoundException.class, () -> {
-            userService.update(userDto1,9999l);
+            userService.update(userDto1, 9999l);
         });
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToDeleteNonExistentUser() {
         userService.create(userDto1);
-        userService.delete(1);
+        userService.delete(1L);
         assertThrows(NotFoundException.class, () -> {
-            userService.delete(999);
+            userService.delete(999L);
         });
     }
 
@@ -102,9 +102,9 @@ public class UserServiceTest {
 
     @Test
     void shouldReturnTrueWhenUserExistAndFalseWhenNotExist() {
-        assertFalse(userService.isUserExist(1));
+        assertFalse(userService.isUserExist(1L));
         userService.create(userDto1);
-        assertTrue(userService.isUserExist(1));
+        assertTrue(userService.isUserExist(1L));
     }
 
     @Test

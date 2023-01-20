@@ -19,7 +19,7 @@ public class ItemRepositoryInMemoryImpl implements ItemRepository {
 
     private static long id = 0;
 
-    public ItemRepositoryInMemoryImpl(){
+    public ItemRepositoryInMemoryImpl() {
         items = new HashMap<>();
         itemsOwners = new HashMap<>();
         id = 0;
@@ -27,7 +27,7 @@ public class ItemRepositoryInMemoryImpl implements ItemRepository {
 
 
     @Override
-    public Item save(ItemDto itemDto, long owner){
+    public Item save(ItemDto itemDto, long owner) {
         Item item = ItemMapper.toItem(itemDto, ++id, owner);
         items.put(id, item);
         itemsOwners.put(id, owner);
@@ -35,37 +35,37 @@ public class ItemRepositoryInMemoryImpl implements ItemRepository {
     }
 
     @Override
-    public Item update(ItemDto itemDto, long owner, long itemId){
+    public Item update(ItemDto itemDto, long owner, long itemId) {
         Item item = items.get(itemId);
-        if (itemDto.getName() != null){
+        if (itemDto.getName() != null) {
             item.setName(itemDto.getName());
         }
-        if (itemDto.getDescription() != null){
+        if (itemDto.getDescription() != null) {
             item.setDescription(itemDto.getDescription());
         }
-        if (itemDto.getAvailable() != null){
+        if (itemDto.getAvailable() != null) {
             item.setAvailable(itemDto.getAvailable());
         }
         return item;
     }
 
     @Override
-    public Item findItem(long itemId){
+    public Item findItem(long itemId) {
         return items.get(itemId);
     }
 
     @Override
-    public List<Item> findAll(){
+    public List<Item> findAll() {
         return new ArrayList<>(items.values());
     }
 
     @Override
-    public Map<Long, Long> getItemsOwners(){
+    public Map<Long, Long> getItemsOwners() {
         return itemsOwners;
     }
 
     @Override
-    public boolean isItemExist(long itemId){
+    public boolean isItemExist(long itemId) {
         return items.get(itemId) != null;
     }
 }

@@ -48,65 +48,65 @@ public class ItemServiceTest {
     @Test
     void shouldCreateTwoItemsForOneOwner() {
         userService.create(userDto1);
-        assertEquals(itemService.findAllBNyOwner(1).size(), 0);
-        itemService.create(itemDto1, 1);
-        itemService.create(itemDto2, 1);
-        assertEquals(itemService.findAllBNyOwner(1).size(), 2);
+        assertEquals(itemService.findAllBNyOwner(1L).size(), 0);
+        itemService.create(itemDto1, 1L);
+        itemService.create(itemDto2, 1L);
+        assertEquals(itemService.findAllBNyOwner(1L).size(), 2);
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToCreateItemWithNonExistentOwner() {
         assertThrows(NotFoundException.class, () -> {
-            itemService.create(itemDto1, 999);
+            itemService.create(itemDto1, 999L);
         });
     }
 
     @Test
     void shouldUpdateItem() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
-        assertEquals(itemService.findItem(1).getName(), "itemName1");
-        assertEquals(itemService.findItem(1).getDescription(), "description1");
-        assertTrue(itemService.findItem(1).isAvailable());
-        itemService.update(itemDto2, 1, 1);
-        assertEquals(itemService.findItem(1).getName(), "itemName2");
-        assertEquals(itemService.findItem(1).getDescription(), "description2");
-        assertFalse(itemService.findItem(1).isAvailable());
+        itemService.create(itemDto1, 1L);
+        assertEquals(itemService.findItem(1L).getName(), "itemName1");
+        assertEquals(itemService.findItem(1L).getDescription(), "description1");
+        assertTrue(itemService.findItem(1L).isAvailable());
+        itemService.update(itemDto2, 1L, 1L);
+        assertEquals(itemService.findItem(1L).getName(), "itemName2");
+        assertEquals(itemService.findItem(1L).getDescription(), "description2");
+        assertFalse(itemService.findItem(1L).isAvailable());
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToUpdateStrangeItem() {
         userService.create(userDto1);
         userService.create(userDto2);
-        itemService.create(itemDto1, 1);
+        itemService.create(itemDto1, 1L);
         assertThrows(NotFoundException.class, () -> {
-            itemService.update(itemDto2, 2, 1);
+            itemService.update(itemDto2, 2L, 1L);
         });
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToUpdateItemWithNonExistentOwner() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
+        itemService.create(itemDto1, 1L);
         assertThrows(NotFoundException.class, () -> {
-            itemService.update(itemDto2, 999, 1);
+            itemService.update(itemDto2, 999L, 1L);
         });
     }
 
     @Test
     void shouldReturnItemById() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
-        Item item = itemService.findItem(1);
+        itemService.create(itemDto1, 1L);
+        Item item = itemService.findItem(1L);
         assertEquals(item.getName(), "itemName1");
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToFindItemWithNonExistentOwner() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
+        itemService.create(itemDto1, 1L);
         assertThrows(NotFoundException.class, () -> {
-            itemService.findItem(999);
+            itemService.findItem(999L);
         });
     }
 
@@ -114,46 +114,46 @@ public class ItemServiceTest {
     void shouldReturnItemsByOwnerId() {
         List<Item> items = new ArrayList<>();
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
-        assertEquals(itemService.findAllBNyOwner(1).size(), 1);
-        itemService.create(itemDto2, 1);
-        assertEquals(itemService.findAllBNyOwner(1).size(), 2);
+        itemService.create(itemDto1, 1L);
+        assertEquals(itemService.findAllBNyOwner(1L).size(), 1);
+        itemService.create(itemDto2, 1L);
+        assertEquals(itemService.findAllBNyOwner(1L).size(), 2);
     }
 
     @Test
     void shouldThrowNotFoundExceptionWhenTryToFindAllItemsWithNonExistentOwner() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
+        itemService.create(itemDto1, 1L);
         assertThrows(NotFoundException.class, () -> {
-            itemService.findAllBNyOwner(999);
+            itemService.findAllBNyOwner(999L);
         });
     }
 
     @Test
     void shouldReturnItemsByNameSearchString() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
+        itemService.create(itemDto1, 1L);
         assertEquals(itemService.searchItems("itemName1").size(), 1);
     }
 
     @Test
     void shouldNotReturnNotAvailableItemsByNameSearchString() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
-        itemService.create(itemDto2, 1);
-        itemService.create(itemDto3, 1);
+        itemService.create(itemDto1, 1L);
+        itemService.create(itemDto2, 1L);
+        itemService.create(itemDto3, 1L);
         assertEquals(itemService.searchItems("item").size(), 2);
         itemDto2.setAvailable(true);
-        itemService.update(itemDto2, 1, 2);
+        itemService.update(itemDto2, 1L, 2L);
         assertEquals(itemService.searchItems("item").size(), 3);
     }
 
     @Test
     void shouldReturnItemsByDescriptionSearchString() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
+        itemService.create(itemDto1, 1L);
         assertEquals(itemService.searchItems("description").size(), 1);
-        itemService.create(itemDto3, 1);
+        itemService.create(itemDto3, 1L);
         assertEquals(itemService.searchItems("description").size(), 2);
 
     }
@@ -161,8 +161,8 @@ public class ItemServiceTest {
     @Test
     void shouldNotReturnItemsByEmptySearchOrDescriptionSearchString() {
         userService.create(userDto1);
-        itemService.create(itemDto1, 1);
-        itemService.create(itemDto2, 1);
+        itemService.create(itemDto1, 1L);
+        itemService.create(itemDto2, 1L);
         assertEquals(itemService.searchItems(" ").size(), 0);
     }
 }
