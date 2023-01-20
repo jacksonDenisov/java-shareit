@@ -78,7 +78,7 @@ public class UserServiceTest {
     @Test
     void shouldThrowNotFoundExceptionWhenTryToUpdateNonExistentUser() {
         assertThrows(NotFoundException.class, () -> {
-            userService.update(userDto1, 9999l);
+            userService.update(userDto1, 9999L);
         });
     }
 
@@ -94,9 +94,9 @@ public class UserServiceTest {
     @Test
     void shouldThrowNotFoundExceptionWhenTryToGetNonExistentUser() {
         userService.create(userDto1);
-        userService.findById(1l);
+        userService.findById(1L);
         assertThrows(NotFoundException.class, () -> {
-            userService.findById(999l);
+            userService.findById(999L);
         });
     }
 

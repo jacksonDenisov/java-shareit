@@ -16,7 +16,7 @@ public class UserRepositoryInMemoryImpl implements UserRepository {
     private final Set<String> uniqueEmails;
     private static long id;
 
-    public  UserRepositoryInMemoryImpl(){
+    public UserRepositoryInMemoryImpl() {
         users = new HashMap<>();
         uniqueEmails = new HashSet<>();
         id = 0;
