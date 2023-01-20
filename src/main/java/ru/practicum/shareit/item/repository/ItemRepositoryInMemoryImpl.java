@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 
 import java.util.ArrayList;
@@ -12,15 +13,24 @@ import java.util.Map;
 @Repository
 public class ItemRepositoryInMemoryImpl implements ItemRepository {
 
-    private final Map<Long, Item> items = new HashMap<>();
+    private final Map<Long, Item> items;
+
+    private final Map<Long, Long> itemsOwners;
 
     private static long id = 0;
 
+    public ItemRepositoryInMemoryImpl(){
+        items = new HashMap<>();
+        itemsOwners = new HashMap<>();
+        id = 0;
+    }
+
 
     @Override
-    public Item save(Item item){
-        item.setId(++id);
+    public Item save(ItemDto itemDto, long owner){
+        Item item = ItemMapper.toItem(itemDto, ++id, owner);
         items.put(id, item);
+        itemsOwners.put(id, owner);
         return item;
     }
 
@@ -49,4 +59,13 @@ public class ItemRepositoryInMemoryImpl implements ItemRepository {
         return new ArrayList<>(items.values());
     }
 
+    @Override
+    public Map<Long, Long> getItemsOwners(){
+        return itemsOwners;
+    }
+
+    @Override
+    public boolean isItemExist(long itemId){
+        return items.get(itemId) != null;
+    }
 }

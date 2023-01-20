@@ -3,8 +3,11 @@ package ru.practicum.shareit.user;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.reposiry.UserRepository;
+import ru.practicum.shareit.utils.exeptions.NotFoundException;
+import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import java.util.List;
 
@@ -12,26 +15,35 @@ import java.util.List;
 @Slf4j
 public class UserService {
 
-    UserRepository repository;
+    private final UserRepository repository;
 
     @Autowired
-    public UserService(UserRepository userRepository){
+    public UserService(UserRepository userRepository) {
         this.repository = userRepository;
     }
 
 
-    public User create(User user) {
-        log.info("Создаем нового пользователя " + user);
-        return repository.save(user);
+    public User create(UserDto userDto) {
+        log.info("Создаем нового пользователя {}", userDto);
+        if (!repository.isEmailUnique(userDto.getEmail())) {
+            throw new ValidationException("Такой пользователь уже существует!");
+        }
+        return repository.save(userDto);
     }
 
-    public User update(User user, long id) {
-        log.info("Обновляем пользователя " + user);
-        return repository.update(user, id);
+    public User update(UserDto userDto, long id) {
+        log.info("Обновляем пользователя с id = {}.", id);
+        if (!repository.isUserExist(id)) {
+            throw new NotFoundException("Такого пользователя не существует!");
+        }
+        return repository.update(userDto, id);
     }
 
     public User findById(Long id) {
-        log.info("Возвращаем пользователя с id " + id);
+        log.info("Возвращаем пользователя с id = {}.", id);
+        if (!repository.isUserExist(id)) {
+            throw new NotFoundException("Пользователь не найден!");
+        }
         return repository.findById(id);
     }
 
@@ -42,10 +54,13 @@ public class UserService {
 
     public void delete(long id) {
         log.info("Удаляем пользователя с id = {}.", id);
+        if (!repository.isUserExist(id)) {
+            throw new NotFoundException("Пользователь не найден!");
+        }
         repository.delete(id);
     }
 
-    public boolean isUserExist(long id){
+    public boolean isUserExist(long id) {
         return repository.isUserExist(id);
     }
 }

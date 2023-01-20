@@ -15,7 +15,7 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
 
-    private ItemService service;
+    private final ItemService service;
 
     @Autowired
     public ItemController(ItemService service) {
@@ -23,28 +23,30 @@ public class ItemController {
     }
 
     @PostMapping
-    protected Item create(@Valid @RequestBody ItemDto itemDto, @RequestHeader("X-Sharer-User-Id") long owner) {
+    protected Item create(@Valid @RequestBody ItemDto itemDto,
+                          @RequestHeader("X-Sharer-User-Id") long owner) {
         return service.create(itemDto, owner);
     }
 
     @PatchMapping("/{itemId}")
     protected Item update(@RequestBody ItemDto itemDto,
                           @RequestHeader("X-Sharer-User-Id") long owner,
-                          @PathVariable("itemId") long itemId){
+                          @PathVariable("itemId") long itemId) {
         return service.update(itemDto, owner, itemId);
     }
+
     @GetMapping("/{itemId}")
-    protected Item findItem(@PathVariable("itemId") long itemId){
+    protected Item findItem(@PathVariable("itemId") long itemId) {
         return service.findItem(itemId);
     }
 
     @GetMapping
-    protected List<Item> findAll(@RequestHeader("X-Sharer-User-Id") long owner){
+    protected List<Item> findAll(@RequestHeader("X-Sharer-User-Id") long owner) {
         return service.findAllBNyOwner(owner);
     }
 
     @GetMapping("/search")
-    protected List<Item> searchItems(@RequestParam("text") String search){
+    protected List<Item> searchItems(@RequestParam("text") String search) {
         return service.searchItems(search);
     }
 }

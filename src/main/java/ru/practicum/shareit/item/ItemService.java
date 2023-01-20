@@ -4,27 +4,23 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import ru.practicum.shareit.exeptions.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepositoryInMemoryImpl;
 import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.utils.exeptions.NotFoundException;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
 @Slf4j
 public class ItemService {
 
-    private ItemRepositoryInMemoryImpl repository;
-    private UserService userService;
+    private final ItemRepositoryInMemoryImpl repository;
 
-    private final Map<Long, Long> itemsOwners = new HashMap<>();
+    private final UserService userService;
 
 
     @Autowired
@@ -35,29 +31,37 @@ public class ItemService {
 
 
     public Item create(ItemDto itemDto, long owner) {
-        log.info("Создаем новую вещь " + itemDto);
+        log.info("Создаем новую вещь {}.", itemDto);
         if (!userService.isUserExist(owner)) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        Item item = repository.save(ItemMapper.toItem(itemDto, owner));
-        itemsOwners.put(item.getId(), owner);
-        return item;
+        return repository.save(itemDto, owner);
     }
 
     public Item update(ItemDto itemDto, long owner, long itemId) {
+        log.info("Обновляем вещь с id = {}.", itemId);
         if (!userService.isUserExist(owner)) {
             throw new NotFoundException("Пользователь не найден!");
-        } else if (!itemsOwners.get(itemId).equals(owner)) {
+        }
+        if (!repository.getItemsOwners().get(itemId).equals(owner)) {
             throw new NotFoundException("Такая вещь у пользователя не найдена!");
         }
         return repository.update(itemDto, owner, itemId);
     }
 
     public Item findItem(long itemId) {
+        log.info("Возвращаем вещь с id = {}.", itemId);
+        if (!repository.isItemExist(itemId)) {
+            throw new NotFoundException("Такая вещь не найдена!");
+        }
         return repository.findItem(itemId);
     }
 
     public List<Item> findAllBNyOwner(long owner) {
+        log.info("Возвращаем список вещей пользователя с id= {}.", owner);
+        if (!userService.isUserExist(owner)) {
+            throw new NotFoundException("Пользователь не найден!");
+        }
         return repository
                 .findAll()
                 .stream()
@@ -67,6 +71,7 @@ public class ItemService {
 
 
     public List<Item> searchItems(String text) {
+        log.info("Выполняем поиск вещей по запросу: {}.", text);
         List<Item> foundItems = new ArrayList<>();
         if (text.isBlank()) {
             return foundItems;
@@ -77,6 +82,9 @@ public class ItemService {
                 foundItems.add(item);
             }
         }
-        return foundItems.stream().filter(i -> i.isAvailable()).collect(Collectors.toList());
+        return foundItems
+                .stream()
+                .filter(Item::isAvailable)
+                .collect(Collectors.toList());
     }
 }
