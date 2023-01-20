@@ -17,7 +17,7 @@ public class ItemRepositoryInMemoryImpl implements ItemRepository {
 
     private final Map<Long, Long> itemsOwners;
 
-    private static long id = 0;
+    private long id;
 
     public ItemRepositoryInMemoryImpl() {
         items = new HashMap<>();
