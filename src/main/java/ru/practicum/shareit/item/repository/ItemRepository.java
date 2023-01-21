@@ -8,15 +8,19 @@ import java.util.Map;
 
 public interface ItemRepository {
 
-   Item save(ItemDto itemDto, long owner);
+    Item save(ItemDto itemDto, long owner);
 
-   Item update(ItemDto item, long owner, long itemId);
+    Item update(ItemDto item, long owner, long itemId);
 
-   Item findItem(long itemId);
+    Item findItem(long itemId);
 
-   List<Item> findAll();
+    List<Item> findAll();
 
-   Map<Long, Long> getItemsOwners();
+    List<Item> findAllByOwner(long owner);
 
-   boolean isItemExist(long itemId);
+    List<Item> searchItems(String text);
+
+    Map<Long, Long> getItemsOwners();
+
+    boolean isItemExist(long itemId);
 }

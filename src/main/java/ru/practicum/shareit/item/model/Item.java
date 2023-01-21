@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 @Data
 @AllArgsConstructor
@@ -15,7 +15,7 @@ public class Item {
     private String name;
     @NotBlank
     private String description;
-    @NotEmpty
+    @NotNull
     private boolean available;
     @NotBlank
     private long owner;

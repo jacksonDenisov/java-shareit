@@ -15,38 +15,38 @@ import java.util.List;
 @RequestMapping("/items")
 public class ItemController {
 
-    private final ItemService service;
+    private final ItemService itemService;
 
     @Autowired
-    public ItemController(ItemService service) {
-        this.service = service;
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
     }
 
     @PostMapping
     protected Item create(@Valid @RequestBody ItemDto itemDto,
                           @RequestHeader("X-Sharer-User-Id") long owner) {
-        return service.create(itemDto, owner);
+        return itemService.create(itemDto, owner);
     }
 
     @PatchMapping("/{itemId}")
     protected Item update(@RequestBody ItemDto itemDto,
                           @RequestHeader("X-Sharer-User-Id") long owner,
                           @PathVariable("itemId") long itemId) {
-        return service.update(itemDto, owner, itemId);
+        return itemService.update(itemDto, owner, itemId);
     }
 
     @GetMapping("/{itemId}")
     protected Item findItem(@PathVariable("itemId") long itemId) {
-        return service.findItem(itemId);
+        return itemService.findItem(itemId);
     }
 
     @GetMapping
     protected List<Item> findAll(@RequestHeader("X-Sharer-User-Id") long owner) {
-        return service.findAllBNyOwner(owner);
+        return itemService.findAllByOwner(owner);
     }
 
     @GetMapping("/search")
     protected List<Item> searchItems(@RequestParam("text") String search) {
-        return service.searchItems(search);
+        return itemService.searchItems(search);
     }
 }

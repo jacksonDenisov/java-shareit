@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.repository;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -9,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Repository
 public class ItemRepositoryInMemoryImpl implements ItemRepository {
@@ -57,6 +59,29 @@ public class ItemRepositoryInMemoryImpl implements ItemRepository {
     @Override
     public List<Item> findAll() {
         return new ArrayList<>(items.values());
+    }
+
+    @Override
+    public List<Item> findAllByOwner(long owner) {
+        return items.values()
+                .stream()
+                .filter(i -> i.getOwner() == owner)
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<Item> searchItems(String text) {
+        List<Item> foundItems = new ArrayList<>();
+        if (!text.isBlank()) {
+            for (Item item : items.values()) {
+                if ((StringUtils.containsIgnoreCase(item.getName(), text) ||
+                        StringUtils.containsIgnoreCase(item.getDescription(), text)) &&
+                        item.isAvailable()) {
+                    foundItems.add(item);
+                }
+            }
+        }
+        return foundItems;
     }
 
     @Override

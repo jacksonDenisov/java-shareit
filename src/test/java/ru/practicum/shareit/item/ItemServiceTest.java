@@ -1,24 +1,26 @@
 package ru.practicum.shareit.item;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepositoryInMemoryImpl;
 import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.reposiry.UserRepositoryInMemoryImpl;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
+@SpringBootTest
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class ItemServiceTest {
 
+    @Autowired
     private ItemService itemService;
+    @Autowired
     private UserService userService;
 
     private static ItemDto itemDto1;
@@ -36,22 +38,14 @@ public class ItemServiceTest {
         itemDto3 = new ItemDto("itemName3", "description3", true);
     }
 
-    @BeforeEach
-    public void setup() {
-        this.userService = new UserService(new UserRepositoryInMemoryImpl());
-        this.itemService = new ItemService(
-                new ItemRepositoryInMemoryImpl(),
-                userService
-        );
-    }
 
     @Test
     void shouldCreateTwoItemsForOneOwner() {
         userService.create(userDto1);
-        assertEquals(itemService.findAllBNyOwner(1L).size(), 0);
+        assertEquals(itemService.findAllByOwner(1L).size(), 0);
         itemService.create(itemDto1, 1L);
         itemService.create(itemDto2, 1L);
-        assertEquals(itemService.findAllBNyOwner(1L).size(), 2);
+        assertEquals(itemService.findAllByOwner(1L).size(), 2);
     }
 
     @Test
@@ -112,12 +106,11 @@ public class ItemServiceTest {
 
     @Test
     void shouldReturnItemsByOwnerId() {
-        List<Item> items = new ArrayList<>();
         userService.create(userDto1);
         itemService.create(itemDto1, 1L);
-        assertEquals(itemService.findAllBNyOwner(1L).size(), 1);
+        assertEquals(itemService.findAllByOwner(1L).size(), 1);
         itemService.create(itemDto2, 1L);
-        assertEquals(itemService.findAllBNyOwner(1L).size(), 2);
+        assertEquals(itemService.findAllByOwner(1L).size(), 2);
     }
 
     @Test
@@ -125,7 +118,7 @@ public class ItemServiceTest {
         userService.create(userDto1);
         itemService.create(itemDto1, 1L);
         assertThrows(NotFoundException.class, () -> {
-            itemService.findAllBNyOwner(999L);
+            itemService.findAllByOwner(999L);
         });
     }
 

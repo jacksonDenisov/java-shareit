@@ -1,18 +1,23 @@
 package ru.practicum.shareit.user;
 
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.reposiry.UserRepositoryInMemoryImpl;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
 import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import static org.junit.jupiter.api.Assertions.*;
+import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
+@SpringBootTest
+@DirtiesContext(classMode = BEFORE_EACH_TEST_METHOD)
 public class UserServiceTest {
 
+    @Autowired
     private UserService userService;
     private static UserDto userDto1;
     private static UserDto userDto2;
@@ -23,10 +28,6 @@ public class UserServiceTest {
         userDto2 = new UserDto("name2", "email2@gmail.com");
     }
 
-    @BeforeEach
-    public void setup() {
-        this.userService = new UserService(new UserRepositoryInMemoryImpl());
-    }
 
     @Test
     void shouldCreateTwoUsersWhenEmailsIsUnique() {
