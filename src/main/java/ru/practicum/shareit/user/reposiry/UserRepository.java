@@ -1,23 +1,22 @@
 package ru.practicum.shareit.user.reposiry;
 
-import ru.practicum.shareit.user.dto.UserDto;
+import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.model.User;
 
-import java.util.List;
-
-public interface UserRepository {
-
-    User save(UserDto userDto);
-
-    User update(UserDto userDto, long id);
-
-    User findById(Long id);
-
-    List<User> findAll();
-
-    void delete(long id);
-
-    boolean isUserExist(long id);
-
-    boolean isEmailUnique(String email);
+public interface UserRepository extends JpaRepository<User, Long> {
+    @Transactional
+    @Modifying
+    @Query("update User u set u.name = ?1, u.email = ?2 where u.id = ?3")
+    int updateNameAndEmailById(String name, String email, long id);
+    @Transactional
+    @Modifying
+    @Query("update User u set u.email = ?1 where u.id = ?2")
+    int updateEmailById(String email, long id);
+    @Transactional
+    @Modifying
+    @Query("update User u set u.name = ?1 where u.id = ?2")
+    int updateNameById(String name, long id);
 }

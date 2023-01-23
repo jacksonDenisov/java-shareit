@@ -1,7 +1,7 @@
 package ru.practicum.shareit.request.dto;
 
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.in_memory_impl.user.UserForInMemoryImpl;
 
 import java.util.Date;
 
@@ -14,6 +14,6 @@ public class ItemRequestDto {
 
     private long id;
     private String description;
-    private User requestor;
+    private UserForInMemoryImpl requestor;
     private Date created;
 }

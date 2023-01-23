@@ -1,18 +1,20 @@
-package ru.practicum.shareit.user.dto;
+package ru.practicum.shareit.in_memory_impl.user;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 
+/**
+ * TODO Sprint add-controllers.
+ */
+
 @Data
 @AllArgsConstructor
-@NoArgsConstructor
-public class UserDto {
+public class UserForInMemoryImpl {
 
-    private Long id;
+    private long id;
 
     @NotBlank
     private String name;
