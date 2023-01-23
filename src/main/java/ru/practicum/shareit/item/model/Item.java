@@ -23,8 +23,8 @@ public class Item {
     private Boolean available;
 
     @Column(name = "owner_id")
-    private long ownerId;
+    private Long ownerId;
 
     @Column(name = "request_id")
-    private long requestId;
+    private Long requestId;
 }

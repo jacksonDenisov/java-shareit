@@ -19,4 +19,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     @Modifying
     @Query("update User u set u.name = ?1 where u.id = ?2")
     int updateNameById(String name, long id);
+
+    @Override
+    boolean existsById(Long aLong);
 }

@@ -7,7 +7,10 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.utils.exeptions.NotFoundException;
 
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,20 +20,41 @@ public class ItemServiceImpl implements ItemService {
 
 
     private final ItemRepository itemRepository;
+    private final UserService userService;
 
     @Override
     @Transactional
     public ItemDto create(ItemDto itemDto, long ownerId) {
-        Item item = itemRepository.save(ItemMapper.toItem(itemDto, ownerId));
-        return ItemMapper.toItemDto(item);
+        if (userService.isUserExist(ownerId)) {
+            Item item = itemRepository.save(ItemMapper.toItem(itemDto, ownerId));
+            return ItemMapper.toItemDto(item);
+        } else {
+            throw new NotFoundException("Пользователь не найден!");
+        }
     }
 
     @Override
-    public ItemDto update(ItemDto itemDto, long ownerId, long itemId) {
-        ItemDto itemDto1 = findItem(itemId);
-
-
-        return findItem(itemId);
+    @Transactional
+    public ItemDto update(ItemDto itemDto, long ownerId, long itemId) throws AccessDeniedException {
+        Item item = itemRepository.findById(itemId).get();
+        if (item.getOwnerId() != null && item.getOwnerId().equals(ownerId)) {
+            if (itemDto.getName() != null) {
+                item.setName(itemDto.getName());
+            }
+            if (itemDto.getDescription() != null) {
+                item.setDescription(itemDto.getDescription());
+            }
+            if (itemDto.getAvailable() != null) {
+                item.setAvailable(itemDto.getAvailable());
+            }
+            if (itemDto.getRequestId() != null) {
+                item.setRequestId(itemDto.getRequestId());
+            }
+            Item itemChanged = itemRepository.save(item);
+            return ItemMapper.toItemDto(itemChanged);
+        } else {
+            throw new NotFoundException("Такая вещь у пользователя не найдена!");
+        }
     }
 
     @Override
@@ -41,7 +65,7 @@ public class ItemServiceImpl implements ItemService {
 
     @Override
     public List<ItemDto> findAllByOwner(long ownerId) {
-        List<Item> items = itemRepository.findAll();
+        List<Item> items = itemRepository.findItemsByOwnerId(ownerId);
         return ItemMapper.toItemDto(items);
     }
 

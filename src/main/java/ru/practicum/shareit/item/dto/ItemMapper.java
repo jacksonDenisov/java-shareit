@@ -15,18 +15,23 @@ public class ItemMapper {
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
         item.setOwnerId(ownerId);
-        item.setRequestId(itemDto.getRequestId());
+        if (itemDto.getRequestId() != null){
+            item.setRequestId(itemDto.getRequestId());
+        }
         return item;
     }
 
     public static ItemDto toItemDto(Item item) {
-        return new ItemDto(item.getId(),
-                item.getName(),
-                item.getDescription(),
-                item.getAvailable(),
-                item.getOwnerId(),
-                item.getRequestId()
-        );
+        ItemDto itemDto = new ItemDto();
+        itemDto.setId(item.getId());
+        itemDto.setName(item.getName());
+        itemDto.setDescription(item.getDescription());
+        itemDto.setAvailable(item.getAvailable());
+        itemDto.setOwnerId(item.getOwnerId());
+        if (item.getRequestId() != null){
+            itemDto.setRequestId(item.getRequestId());
+        }
+        return itemDto;
     }
 
     public static List<ItemDto> toItemDto(List<Item> items) {

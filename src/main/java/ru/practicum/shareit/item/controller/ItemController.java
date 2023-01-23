@@ -6,6 +6,7 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
+import java.nio.file.AccessDeniedException;
 import java.util.List;
 
 @RestController
@@ -28,7 +29,7 @@ public class ItemController {
     @PatchMapping("/{itemId}")
     protected ItemDto update(@RequestBody ItemDto itemDto,
                              @RequestHeader("X-Sharer-User-Id") long ownerId,
-                             @PathVariable("itemId") long itemId) {
+                             @PathVariable("itemId") long itemId) throws AccessDeniedException {
         return itemService.update(itemDto, ownerId, itemId);
     }
 

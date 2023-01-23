@@ -7,7 +7,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.in_memory_impl.item.ItemDtoInMemory;
 import ru.practicum.shareit.in_memory_impl.item.ItemForInMemoryImpl;
-import ru.practicum.shareit.in_memory_impl.item.ItemServiceInMemoryInMemoryImpl;
+import ru.practicum.shareit.in_memory_impl.item.ItemServiceInMemoryImpl;
 import ru.practicum.shareit.in_memory_impl.user.UserServiceInMemoryInMemoryImpl;
 import ru.practicum.shareit.in_memory_impl.user.UserDtoInMemory;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
@@ -20,7 +20,7 @@ import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFOR
 public class ItemForInMemoryServiceServiceInMemoryImplTest {
 
     @Autowired
-    private ItemServiceInMemoryInMemoryImpl itemServiceInMemoryImpl;
+    private ItemServiceInMemoryImpl itemServiceInMemoryImpl;
     @Autowired
     private UserServiceInMemoryInMemoryImpl userServiceInMemoryImpl;
 

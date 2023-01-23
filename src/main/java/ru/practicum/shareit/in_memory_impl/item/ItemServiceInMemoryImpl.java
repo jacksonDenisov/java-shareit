@@ -12,7 +12,7 @@ import java.util.List;
 @Service
 @Slf4j
 @Qualifier("ItemServiceInMemory")
-public class ItemServiceInMemoryInMemoryImpl implements ItemServiceInMemory {
+public class ItemServiceInMemoryImpl implements ItemServiceInMemory {
 
     private final ItemRepositoryInMemory itemRepositoryInMemory;
 
@@ -20,7 +20,7 @@ public class ItemServiceInMemoryInMemoryImpl implements ItemServiceInMemory {
 
 
     @Autowired
-    public ItemServiceInMemoryInMemoryImpl(ItemRepositoryInMemory itemRepositoryInMemory, UserServiceInMemoryInMemoryImpl userServiceInMemoryImpl) {
+    public ItemServiceInMemoryImpl(ItemRepositoryInMemory itemRepositoryInMemory, UserServiceInMemoryInMemoryImpl userServiceInMemoryImpl) {
         this.itemRepositoryInMemory = itemRepositoryInMemory;
         this.userServiceInMemoryImpl = userServiceInMemoryImpl;
     }
