@@ -1,6 +1,4 @@
-package ru.practicum.shareit.item.service;
-
-import ru.practicum.shareit.item.dto.ItemDto;
+package ru.practicum.shareit.item;
 
 import java.nio.file.AccessDeniedException;
 import java.util.List;
@@ -15,5 +13,7 @@ public interface ItemService {
 
     List<ItemDto> findAllByOwner(long ownerId);
 
-    //List<ItemDto> searchItems(String text);
+    List<ItemDto> searchItems(String text);
+
+    Boolean isItemAvailable(long itemId);
 }

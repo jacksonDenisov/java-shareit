@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user.model;
+package ru.practicum.shareit.user;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -9,7 +9,9 @@ import javax.persistence.*;
 
 @Entity
 @Table(name = "users")
-@Getter @Setter @ToString
+@Getter
+@Setter
+@ToString
 public class User {
 
     @Id

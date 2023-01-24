@@ -1,9 +1,7 @@
-package ru.practicum.shareit.item.controller;
+package ru.practicum.shareit.item;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.service.ItemService;
 
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
@@ -43,8 +41,8 @@ public class ItemController {
         return itemService.findAllByOwner(ownerId);
     }
 
-/*    @GetMapping("/search")
-    protected List<ItemForInMemoryImpl> searchItems(@RequestParam("text") String search) {
+    @GetMapping("/search")
+    protected List<ItemDto> searchItems(@RequestParam("text") String search) {
         return itemService.searchItems(search);
-    }*/
+    }
 }

@@ -1,12 +1,8 @@
-package ru.practicum.shareit.user.service;
+package ru.practicum.shareit.user;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
-import ru.practicum.shareit.user.reposiry.UserRepository;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,14 +23,15 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public UserDto update(UserDto userDto, long userID) {
-        if (userDto.getName() != null && userDto.getEmail() != null) {
-            userRepository.updateNameAndEmailById(userDto.getName(), userDto.getEmail(), userID);
-        } else if (userDto.getName() != null) {
-            userRepository.updateNameById(userDto.getName(), userID);
-        } else if (userDto.getEmail() != null) {
-            userRepository.updateEmailById(userDto.getEmail(), userID);
+        User user = userRepository.findById(userID).get();
+        if (userDto.getName() != null) {
+            user.setName(userDto.getName());
         }
-        return findById(userID);
+        if (userDto.getEmail() != null) {
+            user.setEmail(userDto.getEmail());
+        }
+        User userChanged = userRepository.save(user);
+        return UserMapper.toUserDto(userChanged);
     }
 
     @Override
@@ -56,7 +53,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public boolean isUserExist(long userId){
+    public boolean isUserExist(long userId) {
         return userRepository.existsById(userId);
     }
 

@@ -1,23 +1,19 @@
-package ru.practicum.shareit.item.service;
+package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemMapper;
-import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.repository.ItemRepository;
-import ru.practicum.shareit.user.service.UserService;
+import ru.practicum.shareit.user.UserService;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
 
 import java.nio.file.AccessDeniedException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
-
 
     private final ItemRepository itemRepository;
     private final UserService userService;
@@ -69,5 +65,23 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(items);
     }
 
-    //public List<ItemDto> searchItems(String text);
+    @Override
+    public List<ItemDto> searchItems(String text) {
+        List<Item> items = new ArrayList<>();
+        if (!text.isBlank()) {
+            items = itemRepository.
+                    findItemsByNameOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text);
+        }
+        return ItemMapper.toItemDto(items);
+    }
+
+    @Override
+    public Boolean isItemAvailable(long itemId){
+        Boolean isItemAvailable = itemRepository.isItemAvailable(itemId);
+        if (isItemAvailable != null){
+            return isItemAvailable;
+        } else {
+           throw new NotFoundException("Запрошенная вещь не существует!");
+        }
+    }
 }
