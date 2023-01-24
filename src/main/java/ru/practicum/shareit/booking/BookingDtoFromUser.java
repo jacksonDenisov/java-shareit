@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
  */
 
 @Data
-public class BookingDto {
+public class BookingDtoFromUser {
 
     private long id;
 
@@ -27,7 +27,7 @@ public class BookingDto {
     @NotNull
     private Long itemId;
 
-    private Long userId;
+    private Long bookerId;
 
     private BookingStatus status;
 }

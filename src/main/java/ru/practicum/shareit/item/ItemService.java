@@ -16,4 +16,6 @@ public interface ItemService {
     List<ItemDto> searchItems(String text);
 
     Boolean isItemAvailable(long itemId);
+
+    long findOwnerIdByItemId(long itemId);
 }

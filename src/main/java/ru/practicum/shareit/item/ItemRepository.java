@@ -13,4 +13,7 @@ public interface ItemRepository extends JpaRepository<Item, Long> {
 
     @Query(value = "select it.is_available from items as it where it.id like ?1 " , nativeQuery = true)
     Boolean isItemAvailable(long itemId);
+
+    @Query(value = "select i.owner_id from items as i where i.id = ?1", nativeQuery = true)
+    long findOwnerIdByItemId(long itemId);
 }

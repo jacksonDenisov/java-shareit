@@ -9,8 +9,16 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class UserMapper {
 
-    public static User toUser(UserDto userDto) {
+    public static User toUserToDb(UserDto userDto) {
         User user = new User();
+        user.setName(userDto.getName());
+        user.setEmail(userDto.getEmail());
+        return user;
+    }
+
+    public static User toUserFromDb(UserDto userDto) {
+        User user = new User();
+        user.setId(userDto.getId());
         user.setName(userDto.getName());
         user.setEmail(userDto.getEmail());
         return user;

@@ -9,12 +9,25 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
 
-    public static Item toItem(ItemDto itemDto, long ownerId) {
+    public static Item toItemToDb(ItemDto itemDto, long ownerId) {
         Item item = new Item();
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
         item.setOwnerId(ownerId);
+        if (itemDto.getRequestId() != null) {
+            item.setRequestId(itemDto.getRequestId());
+        }
+        return item;
+    }
+
+    public static Item toItemFromDb(ItemDto itemDto) {
+        Item item = new Item();
+        item.setId(itemDto.getId());
+        item.setName(itemDto.getName());
+        item.setDescription(itemDto.getDescription());
+        item.setAvailable(itemDto.getAvailable());
+        item.setOwnerId(itemDto.getOwnerId());
         if (itemDto.getRequestId() != null) {
             item.setRequestId(itemDto.getRequestId());
         }
