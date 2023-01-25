@@ -96,8 +96,8 @@ public class ItemServiceImpl implements ItemService {
     public List<ItemDto> searchItems(String text) {
         List<Item> items = new ArrayList<>();
         if (!text.isBlank()) {
-            items = itemRepository.
-                    findItemsByNameOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text);
+            items = itemRepository
+                    .findItemsByNameOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text);
         }
         return ItemMapper.toItemDto(items);
     }
