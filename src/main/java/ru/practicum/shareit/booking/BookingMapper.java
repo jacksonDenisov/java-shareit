@@ -3,9 +3,8 @@ package ru.practicum.shareit.booking;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemDto;
-import ru.practicum.shareit.user.User;
-import ru.practicum.shareit.user.UserDto;
+import ru.practicum.shareit.item.ItemMapper;
+import ru.practicum.shareit.user.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -14,43 +13,38 @@ import java.util.List;
 public class BookingMapper {
 
 
-    public static Booking toBooking(BookingDtoFromUser bookingDtoFromUser, long  bookerId, BookingStatus bookingStatus){
+    public static Booking toBookingNew(BookingDtoFromUser bookingDtoFromUser,
+                                       Item item,
+                                       Long bookerId,
+                                       BookingStatus bookingStatus) {
         Booking booking = new Booking();
         booking.setStatus(bookingStatus);
         booking.setBookerId(bookerId);
         booking.setStart(bookingDtoFromUser.getStart());
         booking.setEnd(bookingDtoFromUser.getEnd());
-        booking.setItemId(bookingDtoFromUser.getItemId());
+        booking.setItem(item);
         return booking;
     }
 
-    public static BookingDtoToUser toBookingDtoToUser(Booking booking, ItemDto itemDto, UserDto booker){
+    public static BookingDtoToUser toBookingDtoToUser(Booking booking) {
         BookingDtoToUser bookingDtoToUser = new BookingDtoToUser();
         bookingDtoToUser.setId(booking.getId());
         bookingDtoToUser.setStart(booking.getStart());
         bookingDtoToUser.setEnd(booking.getEnd());
         bookingDtoToUser.setStatus(booking.getStatus());
-        bookingDtoToUser.setItem(itemDto);
-        bookingDtoToUser.setBooker(booker);
+        bookingDtoToUser.setItem(ItemMapper.toItemDtoForBooking(booking.getItem()));
+        bookingDtoToUser.setBooker(UserMapper.toUserDtoForBooking(booking.getBookerId()));
         return bookingDtoToUser;
     }
 
-    public static BookingDtoFromUser toBookingDto(Booking booking){
-        BookingDtoFromUser bookingDtoFromUser = new BookingDtoFromUser();
-        bookingDtoFromUser.setId(booking.getId());
-        bookingDtoFromUser.setStart(booking.getStart());
-        bookingDtoFromUser.setEnd(booking.getEnd());
-        bookingDtoFromUser.setStatus(booking.getStatus());
-        bookingDtoFromUser.setItemId(booking.getItemId());
-        bookingDtoFromUser.setBookerId(booking.getBookerId());
-        return bookingDtoFromUser;
-    }
-
-    public static List<BookingDtoFromUser> toBookingDto(List<Booking> bookings) {
-        List<BookingDtoFromUser> dtos = new ArrayList<>();
+    public static List<BookingDtoToUser> toBookingDtoToUser(List<Booking> bookings) {
+        List<BookingDtoToUser> dtos = new ArrayList<>();
         for (Booking booking : bookings) {
-            dtos.add(toBookingDto(booking));
+            dtos.add(toBookingDtoToUser(booking));
         }
         return dtos;
     }
+
+
+
 }

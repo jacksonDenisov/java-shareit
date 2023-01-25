@@ -12,6 +12,7 @@ import ru.practicum.shareit.user.UserController;
 import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import javax.validation.ConstraintViolationException;
+import java.nio.file.AccessDeniedException;
 import java.util.Map;
 import java.util.NoSuchElementException;
 
@@ -45,4 +46,11 @@ public class ErrorHandler {
     public Map<String, String> handleConstraintViolationException(final ConstraintViolationException e) {
         return Map.of("error", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.NOT_FOUND)
+    public Map<String, String> handleConstraintViolationException(final AccessDeniedException e) {
+        return Map.of("error", e.getMessage());
+    }
+
 }

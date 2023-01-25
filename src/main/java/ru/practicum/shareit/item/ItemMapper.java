@@ -9,7 +9,7 @@ import java.util.List;
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class ItemMapper {
 
-    public static Item toItemToDb(ItemDto itemDto, long ownerId) {
+    public static Item toItemNew(ItemDto itemDto, long ownerId) {
         Item item = new Item();
         item.setName(itemDto.getName());
         item.setDescription(itemDto.getDescription());
@@ -21,7 +21,7 @@ public class ItemMapper {
         return item;
     }
 
-    public static Item toItemFromDb(ItemDto itemDto) {
+    public static Item toItem(ItemDto itemDto) {
         Item item = new Item();
         item.setId(itemDto.getId());
         item.setName(itemDto.getName());
@@ -32,6 +32,10 @@ public class ItemMapper {
             item.setRequestId(itemDto.getRequestId());
         }
         return item;
+    }
+
+    public static  ItemDtoForBooking toItemDtoForBooking(Item item){
+        return new ItemDtoForBooking(item.getId(), item.getName());
     }
 
     public static ItemDto toItemDto(Item item) {
@@ -46,6 +50,7 @@ public class ItemMapper {
         }
         return itemDto;
     }
+
 
     public static List<ItemDto> toItemDto(List<Item> items) {
         List<ItemDto> dtos = new ArrayList<>();

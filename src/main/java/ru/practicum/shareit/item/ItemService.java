@@ -18,4 +18,6 @@ public interface ItemService {
     Boolean isItemAvailable(long itemId);
 
     long findOwnerIdByItemId(long itemId);
+
+    ItemDtoForBooking findItemForBooking(long itemId);
 }

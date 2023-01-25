@@ -22,7 +22,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public ItemDto create(ItemDto itemDto, long ownerId) {
         if (userService.isUserExist(ownerId)) {
-            Item item = itemRepository.save(ItemMapper.toItemToDb(itemDto, ownerId));
+            Item item = itemRepository.save(ItemMapper.toItemNew(itemDto, ownerId));
             return ItemMapper.toItemDto(item);
         } else {
             throw new NotFoundException("Пользователь не найден!");
@@ -83,6 +83,11 @@ public class ItemServiceImpl implements ItemService {
         } else {
            throw new NotFoundException("Запрошенная вещь не существует!");
         }
+    }
+
+    @Override
+    public ItemDtoForBooking findItemForBooking(long itemId){
+        return ItemMapper.toItemDtoForBooking(itemRepository.findById(itemId).get());
     }
 
     @Override
