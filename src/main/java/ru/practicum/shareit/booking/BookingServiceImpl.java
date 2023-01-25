@@ -5,17 +5,14 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemMapper;
 import ru.practicum.shareit.item.ItemRepository;
-import ru.practicum.shareit.item.ItemService;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
 import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Set;
 
 @Service
 @RequiredArgsConstructor
@@ -24,18 +21,19 @@ public class BookingServiceImpl implements BookingService {
 
     private final BookingRepository bookingRepository;
 
-    private final ItemService itemService;
-    private final UserService userService;
-
     private final ItemRepository itemRepository;
+
+    private final UserRepository userRepository;
+
 
     @Override
     @Transactional
     public BookingDtoToUser create(BookingDtoFromUser bookingDtoFromUser, long bookerId) {
-        Item item = ItemMapper.toItem(itemService.findItem(bookingDtoFromUser.getItemId()));
-        if (!userService.isUserExist(bookerId) || item.getOwnerId() == bookerId) {
+        Item item = itemRepository.findById(bookingDtoFromUser.getItemId()).get();
+        if (!userRepository.existsById(bookerId) || item.getOwnerId() == bookerId) {
             throw new NotFoundException("Некорректный запрос аренды");
-        } else if (!itemService.isItemAvailable(bookingDtoFromUser.getItemId())
+        }
+        if (!item.getAvailable()
                 || bookingDtoFromUser.getStart().isAfter(bookingDtoFromUser.getEnd())) {
             throw new ValidationException("Некорректный запрос аренды");
         }
@@ -48,7 +46,7 @@ public class BookingServiceImpl implements BookingService {
     @Transactional
     public BookingDtoToUser updateStatus(long ownerId, boolean approved, long bookingId) throws AccessDeniedException {
         Booking booking = bookingRepository.findById(bookingId).get();
-        if (ownerId != itemService.findOwnerIdByItemId(booking.getItem().getId())) {
+        if (ownerId != booking.getItem().getOwnerId()) {
             throw new AccessDeniedException("Ошибка доступа!");
         }
 
@@ -67,21 +65,6 @@ public class BookingServiceImpl implements BookingService {
         bookingRepository.save(booking);
         return BookingMapper.toBookingDtoToUser(
                 bookingRepository.findById(bookingId).get());
-
-        /*if (!bookingRepository.existsById(bookingId)) {
-            throw new NotFoundException("Бронирование не найдено!");
-        }
-        if (ownerId != itemService.findOwnerIdByItemId(
-                bookingRepository.findItemIdByBookingId(bookingId))) {
-            throw new AccessDeniedException("Ошибка доступа!");
-        }
-        if (approved) {
-            bookingRepository.updateStatusById(BookingStatus.APPROVED, bookingId);
-        } else {
-            bookingRepository.updateStatusById(BookingStatus.REJECTED, bookingId);
-        }
-        return BookingMapper.toBookingDtoToUser(
-                bookingRepository.findById(bookingId).get());*/
     }
 
     @Override
@@ -98,7 +81,7 @@ public class BookingServiceImpl implements BookingService {
     @Override
     @Transactional
     public List<BookingDtoToUser> findAllBookingsByBookerId(long bookerId, String state) {
-        if (!userService.isUserExist(bookerId)) {
+        if (!userRepository.existsById(bookerId)) {
             throw new NotFoundException("Пользователь не существует!");
         }
         LocalDateTime currentTime = LocalDateTime.now();
@@ -129,8 +112,10 @@ public class BookingServiceImpl implements BookingService {
     }
 
 
+    @Override
+    @Transactional
     public List<BookingDtoToUser> findAllBookingsByItemOwner(long ownerId, String state) {
-        if (!userService.isUserExist(ownerId)) {
+        if (!userRepository.existsById(ownerId)) {
             throw new NotFoundException("Пользователь не существует!");
         }
         LocalDateTime currentTime = LocalDateTime.now();
@@ -159,7 +144,6 @@ public class BookingServiceImpl implements BookingService {
         }
     }
 
-
     private BookingState getBookingState(String state) {
         try {
             return BookingState.valueOf(state);
@@ -167,5 +151,4 @@ public class BookingServiceImpl implements BookingService {
             throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
-
 }

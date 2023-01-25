@@ -9,15 +9,11 @@ public interface ItemService {
 
     ItemDto update(ItemDto itemDto, long ownerId, long itemId) throws AccessDeniedException;
 
-    ItemDto findItem(long itemId);
+    ItemDtoWithBookingDates findItem(long itemId, long userId);
 
-    List<ItemDto> findAllByOwner(long ownerId);
+    List<ItemDtoWithBookingDates> findAllByOwner(long ownerId);
 
     List<ItemDto> searchItems(String text);
 
-    Boolean isItemAvailable(long itemId);
-
-    long findOwnerIdByItemId(long itemId);
-
-    ItemDtoForBooking findItemForBooking(long itemId);
+    CommentDto addComment(long itemId, long userId, CommentDto commentDto);
 }

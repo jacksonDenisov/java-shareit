@@ -1,4 +1,4 @@
-package ru.practicum.shareit.in_memory_tests.item;
+package ru.practicum.shareit.in_memory_impl;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;

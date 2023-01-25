@@ -1,10 +1,6 @@
 package ru.practicum.shareit.booking;
 
-import org.springframework.data.domain.Example;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -21,7 +17,7 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByBookerIdAndStatusEqualsOrderByStartDesc(Long bookerId, BookingStatus bookingStatus);
 
-    List<Booking> findAllByItemOwnerIdOrderByStartDesc (Long ownerId);
+    List<Booking> findAllByItemOwnerIdOrderByStartDesc(Long ownerId);
 
     List<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(Long ownerId, LocalDateTime start, LocalDateTime end);
 
@@ -31,15 +27,10 @@ public interface BookingRepository extends JpaRepository<Booking, Long> {
 
     List<Booking> findAllByItemOwnerIdAndStatusEqualsOrderByStartDesc(Long ownerId, BookingStatus bookingStatus);
 
-    @Transactional
-    @Modifying
-    @Query("update Booking b set b.status = ?1 where b.id = ?2")
-    int updateStatusById(BookingStatus status, Long id);
+    Booking findFirstByItemIdAndEndBeforeOrderByEndDesc(Long itemId, LocalDateTime dateTime);
 
-    @Query(value = "select b.item_id from bookings as b where b.id = ?1", nativeQuery = true)
-    long findItemIdByBookingId(Long bookingId);
+    Booking findFirstByItemIdAndStartAfterOrderByEndDesc(Long itemId, LocalDateTime dateTime);
 
-    Booking findAllByItemId(Long itemId);
-
+    List<Booking> findAllByBookerIdAndEndBefore(long bookerId, LocalDateTime end);
 }
 

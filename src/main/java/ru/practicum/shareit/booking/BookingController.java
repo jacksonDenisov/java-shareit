@@ -2,15 +2,11 @@ package ru.practicum.shareit.booking;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
-import ru.practicum.shareit.item.ItemDto;
 
 import javax.validation.Valid;
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
-/**
- * TODO Sprint add-bookings.
- */
 @RestController
 @RequestMapping(path = "/bookings")
 public class BookingController {
@@ -28,7 +24,6 @@ public class BookingController {
                                       @RequestHeader("X-Sharer-User-Id") long bookerId) {
         return bookingService.create(bookingDtoFromUser, bookerId);
     }
-
 
     @PatchMapping("/{bookingId}")
     protected BookingDtoToUser update(@RequestHeader("X-Sharer-User-Id") long ownerId,
@@ -56,5 +51,4 @@ public class BookingController {
             @RequestParam(name = "state", defaultValue = "ALL") String state) {
         return bookingService.findAllBookingsByItemOwner(ownerId, state);
     }
-
 }

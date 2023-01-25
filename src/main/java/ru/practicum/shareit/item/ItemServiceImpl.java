@@ -3,25 +3,35 @@ package ru.practicum.shareit.item;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import ru.practicum.shareit.user.UserService;
+import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.user.User;
+import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
+import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import java.nio.file.AccessDeniedException;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
 public class ItemServiceImpl implements ItemService {
 
     private final ItemRepository itemRepository;
-    private final UserService userService;
+
+    private final BookingRepository bookingRepository;
+
+    private final CommentRepository commentRepository;
+
+    private final UserRepository userRepository;
+
 
     @Override
     @Transactional
     public ItemDto create(ItemDto itemDto, long ownerId) {
-        if (userService.isUserExist(ownerId)) {
+        if (userRepository.existsById(ownerId)) {
             Item item = itemRepository.save(ItemMapper.toItemNew(itemDto, ownerId));
             return ItemMapper.toItemDto(item);
         } else {
@@ -54,15 +64,32 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto findItem(long itemId) {
-        Optional<Item> item = itemRepository.findById(itemId);
-        return ItemMapper.toItemDto(item.get());
+    public ItemDtoWithBookingDates findItem(long itemId, long userId) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        Item item = itemRepository.findById(itemId).get();
+        return addBookingInfoAndComments(item, userId, currentTime);
     }
 
     @Override
-    public List<ItemDto> findAllByOwner(long ownerId) {
+    public List<ItemDtoWithBookingDates> findAllByOwner(long ownerId) {
+        LocalDateTime currentTime = LocalDateTime.now();
         List<Item> items = itemRepository.findItemsByOwnerId(ownerId);
-        return ItemMapper.toItemDto(items);
+        List<ItemDtoWithBookingDates> itemDtoWithBookingDates = new ArrayList<>();
+        for (Item item : items) {
+            itemDtoWithBookingDates.add(addBookingInfoAndComments(item, ownerId, currentTime));
+        }
+        return itemDtoWithBookingDates;
+    }
+
+    private ItemDtoWithBookingDates addBookingInfoAndComments(Item item, long userId, LocalDateTime currentTime) {
+        List<CommentDto> comments = CommentMapper.toCommentDto(
+                commentRepository.findAllByItemId(item.getId()));
+        if (item.getOwnerId() == userId) {
+            Booking lastBooking = bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(item.getId(), currentTime);
+            Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByEndDesc(item.getId(), currentTime);
+            return ItemMapper.toItemDtoWithBookingDates(item, lastBooking, nextBooking, comments);
+        }
+        return ItemMapper.toItemDtoWithoutBookingDates(item, comments);
     }
 
     @Override
@@ -75,23 +102,16 @@ public class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(items);
     }
 
+
     @Override
-    public Boolean isItemAvailable(long itemId){
-        Boolean isItemAvailable = itemRepository.isItemAvailable(itemId);
-        if (isItemAvailable != null){
-            return isItemAvailable;
-        } else {
-           throw new NotFoundException("Запрошенная вещь не существует!");
+    public CommentDto addComment(long itemId, long userId, CommentDto commentDto) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        Item item = itemRepository.findById(itemId).get();
+        User author = userRepository.findById(userId).get();
+        if (bookingRepository.findAllByBookerIdAndEndBefore(userId, LocalDateTime.now()).isEmpty()) {
+            throw new ValidationException("У вас нет возможности оставить комментарий к этой вещи.");
         }
-    }
-
-    @Override
-    public ItemDtoForBooking findItemForBooking(long itemId){
-        return ItemMapper.toItemDtoForBooking(itemRepository.findById(itemId).get());
-    }
-
-    @Override
-    public long findOwnerIdByItemId(long itemId){
-        return itemRepository.findOwnerIdByItemId(itemId);
+        Comment comment = commentRepository.save(CommentMapper.toCommentNew(commentDto, item, author, currentTime));
+        return CommentMapper.toCommentDto(comment);
     }
 }

@@ -37,6 +37,17 @@ public class BookingMapper {
         return bookingDtoToUser;
     }
 
+    public static BookingDtoForItems toBookingDtoForItems(Booking booking) {
+        BookingDtoForItems bookingDtoForItems = new BookingDtoForItems();
+        bookingDtoForItems.setId(booking.getId());
+        bookingDtoForItems.setStart(booking.getStart());
+        bookingDtoForItems.setEnd(booking.getEnd());
+        bookingDtoForItems.setStatus(booking.getStatus());
+        bookingDtoForItems.setItem(ItemMapper.toItemDtoForBooking(booking.getItem()));
+        bookingDtoForItems.setBookerId(booking.getBookerId());
+        return bookingDtoForItems;
+    }
+
     public static List<BookingDtoToUser> toBookingDtoToUser(List<Booking> bookings) {
         List<BookingDtoToUser> dtos = new ArrayList<>();
         for (Booking booking : bookings) {
@@ -44,7 +55,4 @@ public class BookingMapper {
         }
         return dtos;
     }
-
-
-
 }

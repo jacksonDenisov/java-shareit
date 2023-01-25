@@ -16,22 +16,19 @@ public class UserMapper {
         return user;
     }
 
-    public static User toUser(UserDto userDto) {
-        User user = new User();
-        user.setId(userDto.getId());
-        user.setName(userDto.getName());
-        user.setEmail(userDto.getEmail());
-        return user;
-    }
-
     public static UserDto toUserDto(User user) {
-        return new UserDto(user.getId(), user.getName(), user.getEmail());
+        UserDto userDto = new UserDto();
+        userDto.setId(user.getId());
+        userDto.setName(user.getName());
+        userDto.setEmail(user.getEmail());
+        return userDto;
     }
 
     public static UserDtoForBooking toUserDtoForBooking(Long bookerId) {
-        return new UserDtoForBooking(bookerId);
+        UserDtoForBooking userDtoForBooking = new UserDtoForBooking();
+        userDtoForBooking.setId(bookerId);
+        return userDtoForBooking;
     }
-
 
     public static List<UserDto> toUserDto(List<User> users) {
         List<UserDto> dtos = new ArrayList<>();
