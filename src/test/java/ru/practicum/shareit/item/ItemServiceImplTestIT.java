@@ -143,7 +143,7 @@ class ItemServiceImplTestIT {
     }
 
     @Test
-    void ShouldReturnCorrectCommentWhenCallAddComment() {
+    void shouldReturnCorrectCommentWhenCallAddComment() {
         userRepository.save(user1);
         userRepository.save(user2);
         Item item = new Item();
@@ -171,7 +171,7 @@ class ItemServiceImplTestIT {
     }
 
     @Test
-    void ShouldNotReturnCommentWhenCallAddCommentWithWrongUser() {
+    void shouldNotReturnCommentWhenCallAddCommentWithWrongUser() {
         userRepository.save(user1);
         userRepository.save(user2);
         Item item = new Item();
