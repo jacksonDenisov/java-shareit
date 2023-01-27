@@ -1,0 +1,26 @@
+package ru.practicum.shareit.item;
+
+import lombok.Data;
+
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
+
+
+@Data
+public class ItemDto {
+
+    private long id;
+
+    @NotBlank
+    private String name;
+
+    @NotBlank
+    private String description;
+
+    @NotNull
+    private Boolean available;
+
+    private Long ownerId;
+
+    private Long requestId;
+}
