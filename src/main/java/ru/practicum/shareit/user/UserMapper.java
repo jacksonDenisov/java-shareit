@@ -24,12 +24,6 @@ public class UserMapper {
         return userDto;
     }
 
-    public static UserDtoForBooking toUserDtoForBooking(Long bookerId) {
-        UserDtoForBooking userDtoForBooking = new UserDtoForBooking();
-        userDtoForBooking.setId(bookerId);
-        return userDtoForBooking;
-    }
-
     public static List<UserDto> toUserDto(List<User> users) {
         List<UserDto> dtos = new ArrayList<>();
         for (User user : users) {

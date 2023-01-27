@@ -9,9 +9,9 @@ public interface ItemService {
 
     ItemDto update(ItemDto itemDto, long ownerId, long itemId) throws AccessDeniedException;
 
-    ItemDtoWithBookingDates findItem(long itemId, long userId);
+    ItemDtoBookingDatesAndComments findItem(long itemId, long userId);
 
-    List<ItemDtoWithBookingDates> findAllByOwner(long ownerId);
+    List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId);
 
     List<ItemDto> searchItems(String text);
 

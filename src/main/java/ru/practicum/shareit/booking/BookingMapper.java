@@ -3,15 +3,12 @@ package ru.practicum.shareit.booking;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.item.Item;
-import ru.practicum.shareit.item.ItemMapper;
-import ru.practicum.shareit.user.UserMapper;
 
 import java.util.ArrayList;
 import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class BookingMapper {
-
 
     public static Booking toBookingNew(BookingDtoFromUser bookingDtoFromUser,
                                        Item item,
@@ -32,21 +29,13 @@ public class BookingMapper {
         bookingDtoToUser.setStart(booking.getStart());
         bookingDtoToUser.setEnd(booking.getEnd());
         bookingDtoToUser.setStatus(booking.getStatus());
-        bookingDtoToUser.setItem(ItemMapper.toItemDtoForBooking(booking.getItem()));
-        bookingDtoToUser.setBooker(UserMapper.toUserDtoForBooking(booking.getBookerId()));
+        bookingDtoToUser.setItem(new BookingDtoToUser.Item(
+                booking.getItem().getId(),
+                booking.getItem().getName()));
+        bookingDtoToUser.setBooker(new BookingDtoToUser.User(booking.getBookerId()));
         return bookingDtoToUser;
     }
 
-    public static BookingDtoForItems toBookingDtoForItems(Booking booking) {
-        BookingDtoForItems bookingDtoForItems = new BookingDtoForItems();
-        bookingDtoForItems.setId(booking.getId());
-        bookingDtoForItems.setStart(booking.getStart());
-        bookingDtoForItems.setEnd(booking.getEnd());
-        bookingDtoForItems.setStatus(booking.getStatus());
-        bookingDtoForItems.setItem(ItemMapper.toItemDtoForBooking(booking.getItem()));
-        bookingDtoForItems.setBookerId(booking.getBookerId());
-        return bookingDtoForItems;
-    }
 
     public static List<BookingDtoToUser> toBookingDtoToUser(List<Booking> bookings) {
         List<BookingDtoToUser> dtos = new ArrayList<>();

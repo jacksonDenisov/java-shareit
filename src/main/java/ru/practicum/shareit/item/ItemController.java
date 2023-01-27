@@ -32,13 +32,13 @@ public class ItemController {
     }
 
     @GetMapping("/{itemId}")
-    protected ItemDtoWithBookingDates findItem(@PathVariable("itemId") long itemId,
-                                               @RequestHeader("X-Sharer-User-Id") long userId) {
+    protected ItemDtoBookingDatesAndComments findItem(@PathVariable("itemId") long itemId,
+                                                      @RequestHeader("X-Sharer-User-Id") long userId) {
         return itemService.findItem(itemId, userId);
     }
 
     @GetMapping
-    protected List<ItemDtoWithBookingDates> findAll(@RequestHeader("X-Sharer-User-Id") long ownerId) {
+    protected List<ItemDtoBookingDatesAndComments> findAll(@RequestHeader("X-Sharer-User-Id") long ownerId) {
         return itemService.findAllByOwner(ownerId);
     }
 

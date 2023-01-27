@@ -64,26 +64,25 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDtoWithBookingDates findItem(long itemId, long userId) {
+    public ItemDtoBookingDatesAndComments findItem(long itemId, long userId) {
         LocalDateTime currentTime = LocalDateTime.now();
         Item item = itemRepository.findById(itemId).get();
         return addBookingInfoAndComments(item, userId, currentTime);
     }
 
     @Override
-    public List<ItemDtoWithBookingDates> findAllByOwner(long ownerId) {
+    public List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId) {
         LocalDateTime currentTime = LocalDateTime.now();
         List<Item> items = itemRepository.findItemsByOwnerId(ownerId);
-        List<ItemDtoWithBookingDates> itemDtoWithBookingDates = new ArrayList<>();
+        List<ItemDtoBookingDatesAndComments> itemDtoBookingDateAndComments = new ArrayList<>();
         for (Item item : items) {
-            itemDtoWithBookingDates.add(addBookingInfoAndComments(item, ownerId, currentTime));
+            itemDtoBookingDateAndComments.add(addBookingInfoAndComments(item, ownerId, currentTime));
         }
-        return itemDtoWithBookingDates;
+        return itemDtoBookingDateAndComments;
     }
 
-    private ItemDtoWithBookingDates addBookingInfoAndComments(Item item, long userId, LocalDateTime currentTime) {
-        List<CommentDto> comments = CommentMapper.toCommentDto(
-                commentRepository.findAllByItemId(item.getId()));
+    private ItemDtoBookingDatesAndComments addBookingInfoAndComments(Item item, long userId, LocalDateTime currentTime) {
+        List<Comment> comments = commentRepository.findAllByItemId(item.getId());
         if (item.getOwnerId() == userId) {
             Booking lastBooking = bookingRepository.findFirstByItemIdAndEndBeforeOrderByEndDesc(item.getId(), currentTime);
             Booking nextBooking = bookingRepository.findFirstByItemIdAndStartAfterOrderByEndDesc(item.getId(), currentTime);

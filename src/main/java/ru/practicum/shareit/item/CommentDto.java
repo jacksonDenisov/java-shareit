@@ -13,7 +13,7 @@ public class CommentDto {
     @NotBlank
     private String text;
 
-    private Item item;
+    private Long itemId;
 
     private String authorName;
 
