@@ -1,10 +1,14 @@
 package ru.practicum.shareit.item;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
@@ -27,15 +31,23 @@ public class ItemServiceImpl implements ItemService {
 
     private final UserRepository userRepository;
 
+    private final ItemRequestRepository itemRequestRepository;
+
 
     @Override
     @Transactional
     public ItemDto create(ItemDto itemDto, long ownerId) {
-        if (userRepository.existsById(ownerId)) {
-            Item item = itemRepository.save(ItemMapper.toItemNew(itemDto, ownerId));
-            return ItemMapper.toItemDto(item);
-        } else {
+        if (!userRepository.existsById(ownerId)) {
             throw new NotFoundException("Пользователь не найден!");
+        } else {
+            Item item;
+            if (itemDto.getRequestId() != null) {
+                ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).get();
+                item = itemRepository.save(ItemMapper.toItemNew(itemDto, ownerId, itemRequest));
+            } else {
+                item = itemRepository.save(ItemMapper.toItemNew(itemDto, ownerId));
+            }
+            return ItemMapper.toItemDto(item);
         }
     }
 
@@ -54,7 +66,8 @@ public class ItemServiceImpl implements ItemService {
                 item.setAvailable(itemDto.getAvailable());
             }
             if (itemDto.getRequestId() != null) {
-                item.setRequestId(itemDto.getRequestId());
+                ItemRequest itemRequest = itemRequestRepository.findById(itemDto.getRequestId()).get();
+                item.setRequest(itemRequest);
             }
             Item itemChanged = itemRepository.save(item);
             return ItemMapper.toItemDto(itemChanged);
@@ -64,6 +77,7 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
+    @Transactional
     public ItemDtoBookingDatesAndComments findItem(long itemId, long userId) {
         LocalDateTime currentTime = LocalDateTime.now();
         Item item = itemRepository.findById(itemId).get();
@@ -71,14 +85,41 @@ public class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId) {
+    @Transactional
+    public List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId, Pageable pageable) {
         LocalDateTime currentTime = LocalDateTime.now();
-        List<Item> items = itemRepository.findItemsByOwnerId(ownerId);
+        Page<Item> pageItems = itemRepository.findItemsByOwnerId(ownerId, pageable);
+        List<Item> items = pageItems.toList();
         List<ItemDtoBookingDatesAndComments> itemDtoBookingDateAndComments = new ArrayList<>();
         for (Item item : items) {
             itemDtoBookingDateAndComments.add(addBookingInfoAndComments(item, ownerId, currentTime));
         }
         return itemDtoBookingDateAndComments;
+    }
+
+    @Override
+    @Transactional
+    public List<ItemDto> searchItems(String text, Pageable pageable) {
+        List<Item> items = new ArrayList<>();
+        if (!text.isBlank()) {
+            Page<Item> pageItems = itemRepository
+                    .findItemsByNameOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text, pageable);
+            items = pageItems.toList();
+        }
+        return ItemMapper.toItemDto(items);
+    }
+
+    @Override
+    @Transactional
+    public CommentDto addComment(long itemId, long userId, CommentDto commentDto) {
+        LocalDateTime currentTime = LocalDateTime.now();
+        Item item = itemRepository.findById(itemId).get();
+        User author = userRepository.findById(userId).get();
+        if (bookingRepository.findAllByBookerIdAndEndBefore(userId, LocalDateTime.now()).isEmpty()) {
+            throw new ValidationException("У вас нет возможности оставить комментарий к этой вещи.");
+        }
+        Comment comment = commentRepository.save(CommentMapper.toCommentNew(commentDto, item, author, currentTime));
+        return CommentMapper.toCommentDto(comment);
     }
 
     private ItemDtoBookingDatesAndComments addBookingInfoAndComments(Item item, long userId, LocalDateTime currentTime) {
@@ -89,28 +130,5 @@ public class ItemServiceImpl implements ItemService {
             return ItemMapper.toItemDtoWithBookingDates(item, lastBooking, nextBooking, comments);
         }
         return ItemMapper.toItemDtoWithoutBookingDates(item, comments);
-    }
-
-    @Override
-    public List<ItemDto> searchItems(String text) {
-        List<Item> items = new ArrayList<>();
-        if (!text.isBlank()) {
-            items = itemRepository
-                    .findItemsByNameOrDescriptionContainingIgnoreCaseAndAvailableIsTrue(text, text);
-        }
-        return ItemMapper.toItemDto(items);
-    }
-
-
-    @Override
-    public CommentDto addComment(long itemId, long userId, CommentDto commentDto) {
-        LocalDateTime currentTime = LocalDateTime.now();
-        Item item = itemRepository.findById(itemId).get();
-        User author = userRepository.findById(userId).get();
-        if (bookingRepository.findAllByBookerIdAndEndBefore(userId, LocalDateTime.now()).isEmpty()) {
-            throw new ValidationException("У вас нет возможности оставить комментарий к этой вещи.");
-        }
-        Comment comment = commentRepository.save(CommentMapper.toCommentNew(commentDto, item, author, currentTime));
-        return CommentMapper.toCommentDto(comment);
     }
 }

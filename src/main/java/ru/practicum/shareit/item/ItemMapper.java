@@ -3,6 +3,7 @@ package ru.practicum.shareit.item;
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;
 import ru.practicum.shareit.booking.Booking;
+import ru.practicum.shareit.request.ItemRequest;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -16,16 +17,21 @@ public class ItemMapper {
         item.setDescription(itemDto.getDescription());
         item.setAvailable(itemDto.getAvailable());
         item.setOwnerId(ownerId);
-        if (itemDto.getRequestId() != null) {
-            item.setRequestId(itemDto.getRequestId());
-        }
         return item;
     }
 
-    public static ItemDtoBookingDatesAndComments toItemDtoWithBookingDates(Item item,
-                                                                           Booking lastBooking,
-                                                                           Booking nextBooking,
-                                                                           List<Comment> comments) {
+    public static Item toItemNew(ItemDto itemDto, long ownerId, ItemRequest itemRequest) {
+        Item item = new Item();
+        item.setName(itemDto.getName());
+        item.setDescription(itemDto.getDescription());
+        item.setAvailable(itemDto.getAvailable());
+        item.setOwnerId(ownerId);
+        item.setRequest(itemRequest);
+        return item;
+    }
+
+    public static ItemDtoBookingDatesAndComments toItemDtoWithBookingDates(
+            Item item, Booking lastBooking, Booking nextBooking, List<Comment> comments) {
         ItemDtoBookingDatesAndComments itemDtoBookingDatesAndComments = new ItemDtoBookingDatesAndComments();
         itemDtoBookingDatesAndComments.setId(item.getId());
         itemDtoBookingDatesAndComments.setName(item.getName());
@@ -33,8 +39,8 @@ public class ItemMapper {
         itemDtoBookingDatesAndComments.setAvailable(item.getAvailable());
         itemDtoBookingDatesAndComments.setOwnerId(item.getOwnerId());
         itemDtoBookingDatesAndComments.setComments(toItemDto_Comments(comments));
-        if (item.getRequestId() != null) {
-            itemDtoBookingDatesAndComments.setRequestId(item.getRequestId());
+        if (item.getRequest() != null) {
+            itemDtoBookingDatesAndComments.setRequestId(item.getRequest().getId());
         }
         if (lastBooking != null) {
             itemDtoBookingDatesAndComments.setLastBooking(new ItemDtoBookingDatesAndComments.Booking(
@@ -57,8 +63,8 @@ public class ItemMapper {
         itemDtoBookingDatesAndComments.setAvailable(item.getAvailable());
         itemDtoBookingDatesAndComments.setOwnerId(item.getOwnerId());
         itemDtoBookingDatesAndComments.setComments(toItemDto_Comments(comments));
-        if (item.getRequestId() != null) {
-            itemDtoBookingDatesAndComments.setRequestId(item.getRequestId());
+        if (item.getRequest() != null) {
+            itemDtoBookingDatesAndComments.setRequestId(item.getRequest().getId());
         }
         return itemDtoBookingDatesAndComments;
     }
@@ -70,8 +76,8 @@ public class ItemMapper {
         itemDto.setDescription(item.getDescription());
         itemDto.setAvailable(item.getAvailable());
         itemDto.setOwnerId(item.getOwnerId());
-        if (item.getRequestId() != null) {
-            itemDto.setRequestId(item.getRequestId());
+        if (item.getRequest() != null) {
+            itemDto.setRequestId(item.getRequest().getId());
         }
         return itemDto;
     }

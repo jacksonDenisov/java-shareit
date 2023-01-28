@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
@@ -44,6 +46,7 @@ class ItemServiceImplTestIT {
     private static Boolean availableF;
     private static User user1;
     private static User user2;
+    private static Pageable pageable;
 
 
     @BeforeAll
@@ -61,6 +64,8 @@ class ItemServiceImplTestIT {
         user2 = new User();
         user2.setName("name2");
         user2.setEmail("user2@user.com");
+
+        pageable = PageRequest.of(0, 50);
     }
 
     @Test
@@ -119,10 +124,10 @@ class ItemServiceImplTestIT {
         itemDto.setName(name1);
         itemDto.setDescription(description1);
         itemDto.setAvailable(availableT);
-        assertEquals(itemService.findAllByOwner(user1.getId()).size(), 0);
+        assertEquals(itemService.findAllByOwner(user1.getId(), pageable).size(), 0);
         itemService.create(itemDto, user1.getId());
-        assertEquals(itemService.findAllByOwner(user1.getId()).size(), 1);
-        assertEquals(itemService.findAllByOwner(user1.getId()).get(0).getName(), name1);
+        assertEquals(itemService.findAllByOwner(user1.getId(), pageable).size(), 1);
+        assertEquals(itemService.findAllByOwner(user1.getId(), pageable).get(0).getName(), name1);
     }
 
     @Test
@@ -133,11 +138,11 @@ class ItemServiceImplTestIT {
         itemDto.setDescription("description1");
         itemDto.setAvailable(availableT);
         itemService.create(itemDto, user1.getId());
-        List<ItemDto> itemDtos = itemService.searchItems("name1");
+        List<ItemDto> itemDtos = itemService.searchItems("name1", pageable);
         assertEquals(itemDtos.size(), 1);
-        itemDtos = itemService.searchItems("1");
+        itemDtos = itemService.searchItems("1", pageable);
         assertEquals(itemDtos.size(), 1);
-        itemDtos = itemService.searchItems("deScRipTiOn");
+        itemDtos = itemService.searchItems("deScRipTiOn", pageable);
         assertEquals(itemDtos.size(), 1);
         assertEquals(itemDtos.get(0).getDescription(), "description1");
     }

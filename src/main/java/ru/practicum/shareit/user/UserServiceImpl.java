@@ -35,12 +35,14 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
+    @Transactional
     public UserDto findById(long userId) {
         Optional<User> user = userRepository.findById(userId);
         return UserMapper.toUserDto(user.get());
     }
 
     @Override
+    @Transactional
     public List<UserDto> findAll() {
         List<User> users = userRepository.findAll();
         return UserMapper.toUserDto(users);

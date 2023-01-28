@@ -1,5 +1,7 @@
 package ru.practicum.shareit.item;
 
+import org.springframework.data.domain.Pageable;
+
 import java.nio.file.AccessDeniedException;
 import java.util.List;
 
@@ -11,9 +13,9 @@ public interface ItemService {
 
     ItemDtoBookingDatesAndComments findItem(long itemId, long userId);
 
-    List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId);
+    List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId, Pageable pageable);
 
-    List<ItemDto> searchItems(String text);
+    List<ItemDto> searchItems(String text, Pageable pageable);
 
     CommentDto addComment(long itemId, long userId, CommentDto commentDto);
 }
