@@ -90,7 +90,7 @@ class BookingServiceImplTest {
     }
 
     @Test
-    void shouldThrowsAccessDeniedExceptionFindBookingWhenUserWrong(){
+    void shouldThrowsAccessDeniedExceptionFindBookingWhenUserWrong() {
         when(bookingRepository.findById(anyLong())).thenReturn(Optional.ofNullable(booking));
         assertThrows(AccessDeniedException.class, () -> {
             bookingService.findBooking(999L, 1L);

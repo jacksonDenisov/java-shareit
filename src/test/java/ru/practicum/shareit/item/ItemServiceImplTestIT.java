@@ -251,7 +251,7 @@ class ItemServiceImplTestIT {
     }
 
     @Test
-    void findItemTest(){
+    void findItemTest() {
         userRepository.save(user1);
         ItemDto itemDto = new ItemDto();
         itemDto.setName(name1);
