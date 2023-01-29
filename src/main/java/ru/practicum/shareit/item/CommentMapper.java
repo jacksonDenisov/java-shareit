@@ -5,8 +5,6 @@ import lombok.NoArgsConstructor;
 import ru.practicum.shareit.user.User;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 
 @NoArgsConstructor(access = AccessLevel.PRIVATE)
 public class CommentMapper {
@@ -28,13 +26,5 @@ public class CommentMapper {
         commentDto.setAuthorName(comment.getAuthor().getName());
         commentDto.setCreated(comment.getCreated());
         return commentDto;
-    }
-
-    public static List<CommentDto> toCommentDto(List<Comment> comments) {
-        List<CommentDto> dtos = new ArrayList<>();
-        for (Comment comment : comments) {
-            dtos.add(toCommentDto(comment));
-        }
-        return dtos;
     }
 }

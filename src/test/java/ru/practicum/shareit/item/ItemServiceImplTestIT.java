@@ -10,6 +10,8 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.booking.Booking;
 import ru.practicum.shareit.booking.BookingRepository;
 import ru.practicum.shareit.booking.BookingStatus;
+import ru.practicum.shareit.request.ItemRequest;
+import ru.practicum.shareit.request.ItemRequestRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
@@ -19,8 +21,7 @@ import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -37,6 +38,9 @@ class ItemServiceImplTestIT {
 
     @Autowired
     private ItemRepository itemRepository;
+
+    @Autowired
+    private ItemRequestRepository itemRequestRepository;
 
     private static String name1;
     private static String name2;
@@ -69,7 +73,7 @@ class ItemServiceImplTestIT {
     }
 
     @Test
-    void shouldReturnCorrectItemDtoWhenCreateNew() {
+    void shouldReturnCorrectItemDtoWhenCreateNewWithoutRequest() {
         userRepository.save(user1);
         ItemDto itemDto = new ItemDto();
         itemDto.setName(name1);
@@ -80,25 +84,69 @@ class ItemServiceImplTestIT {
         assertEquals(result.getDescription(), description1);
         assertEquals(result.getAvailable(), availableT);
         assertEquals(result.getOwnerId(), user1.getId());
+        assertNull(result.getRequestId());
+    }
+
+    @Test
+    void shouldReturnCorrectItemDtoWhenCreateNewAndWithRequest() {
+        userRepository.save(user1);
+        userRepository.save(user2);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName(name1);
+        itemDto.setDescription(description1);
+        itemDto.setAvailable(availableT);
+        itemDto.setRequestId(1L);
+
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setId(1L);
+        itemRequest.setRequester(user1);
+        itemRequest.setDescription("Test");
+        itemRequest.setCreated(LocalDateTime.now());
+        itemRequest.setRequester(user2);
+        itemRequestRepository.save(itemRequest);
+
+        ItemDto result = itemService.create(itemDto, user1.getId());
+        assertEquals(result.getRequestId(), itemRequest.getId());
+    }
+
+    @Test
+    void shouldThrowsNotFoundExceptionWhenCreateNewWithWrongUser() {
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName(name1);
+        itemDto.setDescription(description1);
+        itemDto.setAvailable(availableT);
+        assertThrows(NotFoundException.class, () -> {
+            itemService.create(itemDto, 999L);
+        });
     }
 
     @Test
     void shouldUpdateWhenUserIsOk() throws AccessDeniedException {
         userRepository.save(user1);
+        userRepository.save(user2);
         ItemDto itemDto = new ItemDto();
         itemDto.setName(name1);
         itemDto.setDescription(description1);
         itemDto.setAvailable(availableT);
         ItemDto result = itemService.create(itemDto, user1.getId());
 
+        ItemRequest itemRequest = new ItemRequest();
+        itemRequest.setDescription("Test");
+        itemRequest.setCreated(LocalDateTime.now());
+        itemRequest.setRequester(user2);
+        itemRequestRepository.save(itemRequest);
+
         itemDto.setName(name2);
         itemDto.setDescription(description2);
         itemDto.setAvailable(availableF);
+        itemDto.setRequestId(1L);
         ItemDto result2 = itemService.update(itemDto, user1.getId(), result.getId());
 
         assertEquals(result2.getName(), name2);
         assertEquals(result2.getDescription(), description2);
         assertEquals(result2.getAvailable(), availableF);
+        assertEquals(result2.getRequestId(), 1L);
+
     }
 
     @Test
@@ -200,5 +248,18 @@ class ItemServiceImplTestIT {
         assertThrows(ValidationException.class, () -> {
             itemService.addComment(item.getId(), user1.getId(), commentDto);
         });
+    }
+
+    @Test
+    void findItemTest(){
+        userRepository.save(user1);
+        ItemDto itemDto = new ItemDto();
+        itemDto.setName(name1);
+        itemDto.setDescription(description1);
+        itemDto.setAvailable(availableT);
+        itemService.create(itemDto, user1.getId());
+        ItemDtoBookingDatesAndComments result = itemService.findItem(1L, 1L);
+        assertEquals(result.getName(), itemDto.getName());
+        assertEquals(result.getDescription(), itemDto.getDescription());
     }
 }

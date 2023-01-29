@@ -64,6 +64,7 @@ class ItemRequestServiceImplTest {
         itemRequest.setRequester(user);
         itemRequest.setDescription("Test");
         itemRequest.setCreated(created);
+        itemRequest.setRequester(user);
 
         item = new Item();
         item.setId(1L);
@@ -78,8 +79,6 @@ class ItemRequestServiceImplTest {
 
         itemRequestDto = new ItemRequestDto();
         itemRequestDto.setDescription("Test");
-
-
     }
 
     @Test

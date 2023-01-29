@@ -50,10 +50,6 @@ public class ItemRepositoryInMemory {
         return items.get(itemId);
     }
 
-    public List<ItemForInMemoryImpl> findAll() {
-        return new ArrayList<>(items.values());
-    }
-
     public List<ItemForInMemoryImpl> findAllByOwner(long owner) {
         return items.values()
                 .stream()
