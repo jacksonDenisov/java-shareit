@@ -36,11 +36,11 @@ class UserControllerTest {
 
     private static UserDto userDto;
 
-    private UserDto userDtoEmpty = new UserDto();
+    private final UserDto userDtoEmpty = new UserDto();
 
 
     @BeforeAll
-    static void SetUp() {
+    static void setUp() {
         userDto = new UserDto();
         userDto.setName("name");
         userDto.setEmail("user@user.com");

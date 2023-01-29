@@ -37,7 +37,7 @@ class BookingControllerTest {
     private static BookingDtoToUser bookingDtoToUser;
 
     @BeforeAll
-    static void SetUp() {
+    static void setUp() {
         bookingDtoFromUser = new BookingDtoFromUser();
         bookingDtoFromUser.setStart(LocalDateTime.MAX);
         bookingDtoFromUser.setEnd(LocalDateTime.MAX);

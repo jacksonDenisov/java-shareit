@@ -6,8 +6,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -20,7 +18,8 @@ import static org.hamcrest.Matchers.is;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.when;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -38,10 +37,10 @@ class ItemRequestControllerTest {
 
     private static ItemRequestDto itemRequestDto;
 
-    private ItemRequestDto itemRequestDtoEmpty = new ItemRequestDto();
+    private final ItemRequestDto itemRequestDtoEmpty = new ItemRequestDto();
 
     @BeforeAll
-    static void SetUp() {
+    static void setUp() {
         itemRequestDto = new ItemRequestDto();
         itemRequestDto.setDescription("description");
         itemRequestDto.setCreated(LocalDateTime.MIN);

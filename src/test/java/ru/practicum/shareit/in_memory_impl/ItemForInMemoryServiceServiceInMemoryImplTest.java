@@ -8,13 +8,12 @@ import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.in_memory_impl.item.ItemDtoInMemory;
 import ru.practicum.shareit.in_memory_impl.item.ItemForInMemoryImpl;
 import ru.practicum.shareit.in_memory_impl.item.ItemServiceInMemoryImpl;
-import ru.practicum.shareit.in_memory_impl.user.UserServiceInMemoryInMemoryImpl;
 import ru.practicum.shareit.in_memory_impl.user.UserDtoInMemory;
+import ru.practicum.shareit.in_memory_impl.user.UserServiceInMemoryInMemoryImpl;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.annotation.DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD;
-import static org.springframework.test.annotation.DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD;
 
 @SpringBootTest
 @DirtiesContext(classMode = AFTER_EACH_TEST_METHOD)

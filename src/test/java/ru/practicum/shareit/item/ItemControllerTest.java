@@ -34,10 +34,10 @@ class ItemControllerTest {
 
     private static ItemDto itemDto;
 
-    private static ItemDto itemDtoEmpty = new ItemDto();
+    private static final ItemDto itemDtoEmpty = new ItemDto();
 
     @BeforeAll
-    static void SetUp() {
+    static void setUp() {
         itemDto = new ItemDto();
         itemDto.setName("name");
         itemDto.setDescription("description");
