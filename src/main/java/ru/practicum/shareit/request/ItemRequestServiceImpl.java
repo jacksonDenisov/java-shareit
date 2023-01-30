@@ -40,14 +40,9 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!userRepository.existsById(ownerId)) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        List<ItemRequest> itemRequests = itemRequestRepository.findAllByRequesterIdOrderByCreatedAsc(ownerId);
-        List<ItemRequestDtoWithReply> itemRequestDtoWithReplies = new ArrayList<>();
-        List<Item> items;
-        for (ItemRequest itemRequest : itemRequests) {
-            items = itemRepository.findAllByRequestId(itemRequest.getId());
-            itemRequestDtoWithReplies.add(ItemRequestMapper.toItemRequestDtoWithReply(itemRequest, items));
-        }
-        return itemRequestDtoWithReplies;
+        List<ItemRequest> itemRequests = itemRequestRepository.findAllRequestsForOwner(ownerId);
+        List<Item> items = itemRepository.findAllItemsByRequesterId(ownerId);
+        return fillItemRequestsWithItems(itemRequests, items);
     }
 
     @Override
@@ -56,17 +51,10 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         if (!userRepository.existsById(userId)) {
             throw new NotFoundException("Пользователь не найден!");
         }
-        Page<ItemRequest> pageItemRequests = itemRequestRepository.findAll(pageable);
+        Page<ItemRequest> pageItemRequests = itemRequestRepository.findAllRequestsOfOtherUsers(userId, pageable);
         List<ItemRequest> itemRequests = pageItemRequests.toList();
-        List<ItemRequestDtoWithReply> itemRequestDtoWithReplies = new ArrayList<>();
-        List<Item> items;
-        for (ItemRequest itemRequest : itemRequests) {
-            if (itemRequest.getRequester().getId() != userId) {
-                items = itemRepository.findAllByRequestId(itemRequest.getId());
-                itemRequestDtoWithReplies.add(ItemRequestMapper.toItemRequestDtoWithReply(itemRequest, items));
-            }
-        }
-        return itemRequestDtoWithReplies;
+        List<Item> items = itemRepository.findAllItemsOfOtherUsers(userId);
+        return fillItemRequestsWithItems(itemRequests, items);
     }
 
     @Override
@@ -78,5 +66,19 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         ItemRequest itemRequest = itemRequestRepository.findById(requestId).get();
         List<Item> items = itemRepository.findAllByRequestId(requestId);
         return ItemRequestMapper.toItemRequestDtoWithReply(itemRequest, items);
+    }
+
+    private List<ItemRequestDtoWithReply> fillItemRequestsWithItems(List<ItemRequest> itemRequests, List<Item> items) {
+        List<ItemRequestDtoWithReply> itemRequestDtoWithReplies = new ArrayList<>();
+        for (ItemRequest itemRequest : itemRequests) {
+            List<Item> itemsForRequest = new ArrayList<>();
+            for (Item item : items) {
+                if (item.getRequest().getId() == itemRequest.getId()) {
+                    itemsForRequest.add(item);
+                }
+            }
+            itemRequestDtoWithReplies.add(ItemRequestMapper.toItemRequestDtoWithReply(itemRequest, itemsForRequest));
+        }
+        return itemRequestDtoWithReplies;
     }
 }

@@ -94,7 +94,7 @@ class ItemRequestServiceImplTest {
         when(userRepository.existsById(any())).thenReturn(true);
         List<ItemRequest> itemRequests = new ArrayList<>();
         itemRequests.add(itemRequest);
-        when(itemRequestRepository.findAllByRequesterIdOrderByCreatedAsc(any()))
+        when(itemRequestRepository.findAllRequestsForOwner(any()))
                 .thenReturn(itemRequests);
         when(itemRepository.findAllByRequestId(any())).thenReturn(itemList);
 
