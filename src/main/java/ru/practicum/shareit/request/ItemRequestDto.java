@@ -1,19 +1,17 @@
 package ru.practicum.shareit.request;
 
 import lombok.Data;
-import ru.practicum.shareit.in_memory_impl.user.UserForInMemoryImpl;
 
-import java.util.Date;
-
-/**
- * TODO Sprint add-item-requests.
- */
+import javax.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
 
 @Data
 public class ItemRequestDto {
 
     private long id;
+
+    @NotBlank
     private String description;
-    private UserForInMemoryImpl requestor;
-    private Date created;
+
+    private LocalDateTime created;
 }

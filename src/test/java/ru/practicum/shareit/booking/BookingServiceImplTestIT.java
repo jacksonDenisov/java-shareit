@@ -4,6 +4,8 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.annotation.DirtiesContext;
 import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
@@ -33,6 +35,7 @@ class BookingServiceImplTestIT {
     private static User user1;
     private static User user2;
     private static Item item1;
+    private static Pageable pageable;
 
     @BeforeAll
     static void setup() {
@@ -48,6 +51,8 @@ class BookingServiceImplTestIT {
         user2 = new User();
         user2.setName("name2");
         user2.setEmail("user2@user.com");
+
+        pageable = PageRequest.of(0, 50);
     }
 
     @Test
@@ -144,12 +149,21 @@ class BookingServiceImplTestIT {
         bookingDtoFromUser.setItemId(item.getId());
         bookingDtoFromUser.setStart(LocalDateTime.MIN);
         bookingDtoFromUser.setEnd(LocalDateTime.MAX);
-        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "ALL").size(), 0);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "ALL", pageable).size(), 0);
         bookingService.create(bookingDtoFromUser, booker.getId());
-        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "ALL").size(), 1);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "ALL", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "CURRENT", pageable).size(), 0);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "PAST", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "FUTURE", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "WAITING", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "REJECTED", pageable).size(), 0);
+
+        assertThrows(ValidationException.class, () -> {
+            bookingService.findAllBookingsByBookerId(booker.getId(), "UNSUPPORTED_STATUS", pageable);
+        });
 
         assertThrows(NotFoundException.class, () -> {
-            bookingService.findAllBookingsByBookerId(9999L, "ALL");
+            bookingService.findAllBookingsByBookerId(9999L, "ALL", pageable);
         });
     }
 
@@ -162,12 +176,21 @@ class BookingServiceImplTestIT {
         bookingDtoFromUser.setItemId(item.getId());
         bookingDtoFromUser.setStart(LocalDateTime.MIN);
         bookingDtoFromUser.setEnd(LocalDateTime.MAX);
-        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "ALL").size(), 0);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "ALL", pageable).size(), 0);
         bookingService.create(bookingDtoFromUser, booker.getId());
-        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "ALL").size(), 1);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "ALL", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "CURRENT", pageable).size(), 0);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "PAST", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "FUTURE", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "WAITING", pageable).size(), 1);
+        assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "REJECTED", pageable).size(), 0);
+
+        assertThrows(ValidationException.class, () -> {
+            bookingService.findAllBookingsByItemOwner(owner.getId(), "SOME UNSUPPORTED_STATUS", pageable);
+        });
 
         assertThrows(NotFoundException.class, () -> {
-            bookingService.findAllBookingsByItemOwner(9999L, "ALL");
+            bookingService.findAllBookingsByItemOwner(9999L, "ALL", pageable);
         });
     }
 }

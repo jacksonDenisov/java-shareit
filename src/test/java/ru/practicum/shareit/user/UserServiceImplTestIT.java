@@ -76,4 +76,17 @@ public class UserServiceImplTestIT {
         userService.deleteById(1L);
         assertEquals(userService.findAll().size(), 0);
     }
+
+    @Test
+    void shouldFindUserById() {
+        UserDto userDto = new UserDto();
+        userDto.setName(userName);
+        userDto.setEmail(userEmail);
+        userService.create(userDto);
+        UserDto result = userService.findById(1L);
+        assertEquals(result.getId(), 1L);
+        assertEquals(result.getName(), userDto.getName());
+        assertEquals(result.getEmail(), userDto.getEmail());
+    }
+
 }
