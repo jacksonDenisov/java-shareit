@@ -72,6 +72,7 @@ class BookingControllerTest {
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
     @Test
     void updateBooking() throws Exception {
         when(bookingService.updateStatus(anyLong(), anyBoolean(), anyLong())).thenReturn(bookingDtoToUser);
