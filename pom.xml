@@ -14,16 +14,19 @@
     <version>0.0.1-SNAPSHOT</version>
     <packaging>pom</packaging>
 
-    <modules>
-        <module>ShareItServer</module>
-        <module>ShareItGateway</module>
-    </modules>
-
     <name>ShareIt</name>
 
     <properties>
         <java.version>11</java.version>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     </properties>
+
+    <modules>
+        <module>ShareItServer</module>
+        <module>ShareItGateway</module>
+    </modules>
 
     <dependencies>
         <dependency>
