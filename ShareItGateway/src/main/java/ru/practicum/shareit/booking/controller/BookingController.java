@@ -36,8 +36,8 @@ public class BookingController {
 
     @PatchMapping("/{bookingId}")
     protected ResponseEntity<Object> update(@RequestHeader(USER_ID_REQUEST_HEADER) long ownerId,
-                                      @RequestParam("approved") boolean approved,
-                                      @PathVariable("bookingId") long bookingId) {
+                                            @RequestParam("approved") boolean approved,
+                                            @PathVariable("bookingId") long bookingId) {
         return bookingClient.updateStatus(ownerId, approved, bookingId);
     }
 
@@ -50,9 +50,9 @@ public class BookingController {
 
     @GetMapping
     public ResponseEntity<Object> findAllBookingsByBookerId(@RequestHeader(USER_ID_REQUEST_HEADER) long userId,
-                                              @RequestParam(name = "state", defaultValue = "all") String stateParam,
-                                              @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                              @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                                            @RequestParam(name = "state", defaultValue = "all") String stateParam,
+                                                            @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                            @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new UnsupportedStateException("Unknown state: " + stateParam));
         log.info("Get booking with state {}, userId={}, from={}, size={}", stateParam, userId, from, size);
