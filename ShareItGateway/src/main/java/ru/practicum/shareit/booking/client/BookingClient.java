@@ -10,6 +10,7 @@ import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.booking.dto.BookItemRequestDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
+import ru.practicum.shareit.utils.ValidationException;
 
 import java.util.Map;
 
@@ -28,6 +29,9 @@ public class BookingClient extends BaseClient {
     }
 
     public ResponseEntity<Object> create(long userId, BookItemRequestDto requestDto) {
+        if (requestDto.getStart().isAfter(requestDto.getEnd())) {
+            throw new ValidationException("Время начала аренды не может быть позже ее окончания.");
+        }
         return post("", userId, requestDto);
     }
 

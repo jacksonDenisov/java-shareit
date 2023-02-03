@@ -16,4 +16,10 @@ public class ErrorHandler {
     public Map<String, String> handleUnsupportedStateException(final UnsupportedStateException e) {
         return Map.of("error", e.getMessage());
     }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public Map<String, String> handleValidationException(final ValidationException e) {
+        return Map.of("error", e.getMessage());
+    }
 }

@@ -10,7 +10,6 @@ import ru.practicum.shareit.item.Item;
 import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
-import ru.practicum.shareit.utils.exeptions.UnsupportedStateException;
 import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import java.nio.file.AccessDeniedException;
@@ -34,11 +33,10 @@ public class BookingServiceImpl implements BookingService {
     public BookingDtoToUser create(BookingDtoFromUser bookingDtoFromUser, long bookerId) {
         Item item = itemRepository.findById(bookingDtoFromUser.getItemId()).get();
         if (!userRepository.existsById(bookerId) || item.getOwnerId() == bookerId) {
-            throw new NotFoundException("Некорректный запрос аренды");
+            throw new NotFoundException("Некорректный запрос аренды.");
         }
-        if (!item.getAvailable()
-                || bookingDtoFromUser.getStart().isAfter(bookingDtoFromUser.getEnd())) {
-            throw new ValidationException("Некорректный запрос аренды");
+        if (!item.getAvailable()) {
+            throw new ValidationException("Данная вещь недоступна для бронирования.");
         }
         Booking booking = bookingRepository.save(
                 BookingMapper.toBookingNew(bookingDtoFromUser, item, bookerId, BookingStatus.WAITING));
@@ -88,7 +86,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Пользователь не существует!");
         }
         LocalDateTime currentTime = LocalDateTime.now();
-        BookingState bookingState = getBookingState(state);
+        BookingState bookingState = BookingState.valueOf(state);
         Page<Booking> pageBooking;
         switch (bookingState) {
             case ALL:
@@ -127,7 +125,7 @@ public class BookingServiceImpl implements BookingService {
             throw new NotFoundException("Пользователь не существует!");
         }
         LocalDateTime currentTime = LocalDateTime.now();
-        BookingState bookingState = getBookingState(state);
+        BookingState bookingState = BookingState.valueOf(state);
         Page<Booking> pageBooking;
         switch (bookingState) {
             case ALL:
@@ -155,14 +153,6 @@ public class BookingServiceImpl implements BookingService {
                 return BookingMapper.toBookingDtoToUser(pageBooking.toList());
             default:
                 throw new ValidationException("Unknown state: UNSUPPORTED_STATUS");
-        }
-    }
-
-    private BookingState getBookingState(String state) {
-        try {
-            return BookingState.valueOf(state);
-        } catch (Exception e) {
-            throw new UnsupportedStateException("Unknown state: UNSUPPORTED_STATUS");
         }
     }
 }

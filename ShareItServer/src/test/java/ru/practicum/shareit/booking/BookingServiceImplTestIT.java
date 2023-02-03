@@ -12,13 +12,13 @@ import ru.practicum.shareit.item.ItemRepository;
 import ru.practicum.shareit.user.User;
 import ru.practicum.shareit.user.UserRepository;
 import ru.practicum.shareit.utils.exeptions.NotFoundException;
-import ru.practicum.shareit.utils.exeptions.UnsupportedStateException;
 import ru.practicum.shareit.utils.exeptions.ValidationException;
 
 import java.nio.file.AccessDeniedException;
 import java.time.LocalDateTime;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
@@ -91,12 +91,6 @@ class BookingServiceImplTestIT {
         assertThrows(NotFoundException.class, () -> {
             bookingService.create(bookingDtoFromUser, owner.getId());
         });
-
-        bookingDtoFromUser.setStart(LocalDateTime.MAX);
-        bookingDtoFromUser.setEnd(LocalDateTime.MIN);
-        assertThrows(ValidationException.class, () -> {
-            bookingService.create(bookingDtoFromUser, booker.getId());
-        });
     }
 
     @Test
@@ -159,10 +153,6 @@ class BookingServiceImplTestIT {
         assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "WAITING", pageable).size(), 1);
         assertEquals(bookingService.findAllBookingsByBookerId(booker.getId(), "REJECTED", pageable).size(), 0);
 
-        assertThrows(UnsupportedStateException.class, () -> {
-            bookingService.findAllBookingsByBookerId(booker.getId(), "UNSUPPORTED_STATUS", pageable);
-        });
-
         assertThrows(NotFoundException.class, () -> {
             bookingService.findAllBookingsByBookerId(9999L, "ALL", pageable);
         });
@@ -185,10 +175,6 @@ class BookingServiceImplTestIT {
         assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "FUTURE", pageable).size(), 1);
         assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "WAITING", pageable).size(), 1);
         assertEquals(bookingService.findAllBookingsByItemOwner(owner.getId(), "REJECTED", pageable).size(), 0);
-
-        assertThrows(UnsupportedStateException.class, () -> {
-            bookingService.findAllBookingsByItemOwner(owner.getId(), "SOME UNSUPPORTED_STATUS", pageable);
-        });
 
         assertThrows(NotFoundException.class, () -> {
             bookingService.findAllBookingsByItemOwner(9999L, "ALL", pageable);
