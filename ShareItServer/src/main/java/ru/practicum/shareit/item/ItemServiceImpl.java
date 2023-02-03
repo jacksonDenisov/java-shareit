@@ -88,7 +88,7 @@ public class ItemServiceImpl implements ItemService {
     @Transactional
     public List<ItemDtoBookingDatesAndComments> findAllByOwner(long ownerId, Pageable pageable) {
         LocalDateTime currentTime = LocalDateTime.now();
-        Page<Item> pageItems = itemRepository.findItemsByOwnerId(ownerId, pageable);
+        Page<Item> pageItems = itemRepository.findItemsByOwnerIdOrderByIdAsc(ownerId, pageable);
         List<Item> items = pageItems.toList();
         List<ItemDtoBookingDatesAndComments> itemDtoBookingDateAndComments = new ArrayList<>();
         for (Item item : items) {
